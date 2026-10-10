@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useNutrition } from '../hooks/useNutrition';
 import { compressFoodImage } from '../services/imageCompression';
 import { getProfileApi } from '../services/api';
+import BrandLogo from '../components/BrandLogo';
 
 export const Scan = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -149,7 +150,7 @@ export const Scan = () => {
 
   if (profileReady !== true) {
     return (
-      <div className="scanner-viewport">
+      <div className="kl-page scanner-viewport kl-fade-up">
         <div className="scanner-screen scanner-profile-gate">
           <div>
             <strong>{profileReady === null ? 'Checking your profile…' : 'Complete your profile first'}</strong>
@@ -162,7 +163,7 @@ export const Scan = () => {
   }
 
   return (
-    <div className="scanner-viewport">
+    <div className="kl-page scanner-viewport kl-fade-up">
       <div className="scanner-screen">
         <div className="scanner-preview">
           {preview ? (
@@ -191,6 +192,7 @@ export const Scan = () => {
 
           <div className="scanner-topbar">
             <Link to="/home" className="scanner-round-button" aria-label="Close scanner"><X size={22} /></Link>
+            <BrandLogo size={34} showText={false} />
             {preview ? (
               <button className="scanner-retake-top-button" onClick={handleRetake} aria-label="Retake photo" type="button">
                 <RotateCcw size={14} />

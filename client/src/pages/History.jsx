@@ -27,6 +27,8 @@ import {
 import { getTrackedMeals } from "../services/tracker";
 import { getHistoryApi } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import { BottomNav } from "../components/BottomNav";
+import BrandLogo from "../components/BrandLogo";
 
 /* =========================================================
    FOOD STYLES & CATEGORIES
@@ -197,33 +199,7 @@ function FoodIcon({ food, image }) {
 ========================================================= */
 
 function SharedDashboardFooter() {
-  return (
-    <nav className="dashboard-nav" aria-label="Main navigation">
-      <Link to="/home">
-        <Home size={18} />
-        <span>Home</span>
-      </Link>
-      <Link to="/progress">
-        <LayoutDashboard size={18} />
-        <span>Progress</span>
-      </Link>
-      <Link className="scan-nav" to="/scan">
-        <span>
-          <ScanLine size={24} />
-          <b aria-hidden="true">✦</b>
-        </span>
-        <small>Scan</small>
-      </Link>
-      <Link className="active" to="/history">
-        <HistoryIcon size={18} />
-        <span>History</span>
-      </Link>
-      <Link to="/profile">
-        <User size={19} />
-        <span>Profile</span>
-      </Link>
-    </nav>
-  );
+  return <BottomNav active="history" />;
 }
 
 /* =========================================================
@@ -405,7 +381,7 @@ export default function History() {
   };
 
   return (
-    <div className="nl-history-page">
+    <div className="kl-page nl-history-page kl-fade-up">
       {/* SCROLL AREA */}
       <div className="nl-history-scroll" ref={scrollRef}>
         <div className="nl-history-container">
@@ -420,10 +396,7 @@ export default function History() {
               <ChevronLeft size={20} strokeWidth={2.2} />
             </button>
 
-            <div className="nl-header-center">
-              <span className="nl-header-tag">YOUR JOURNEY</span>
-              <h1 className="nl-header-title">History</h1>
-            </div>
+            <BrandLogo size={36} tagline={false} />
 
             <button
               type="button"
@@ -677,27 +650,29 @@ export default function History() {
         .nl-history-page {
           position: relative;
           width: 100%;
-          height: 100dvh;
-          min-height: 100dvh;
+          height: 100%;
+          min-height: 100%;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          background: linear-gradient(155deg, #dff7ed 0%, #f4fbf8 42%, #e9f6f1 100%);
+          align-items: stretch;
+          background: transparent;
           color: #173b32;
-          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          font-family: var(--kl-font);
           overflow: hidden;
+          box-sizing: border-box;
         }
 
         .nl-history-scroll {
           width: 100%;
-          max-width: 440px;
+          max-width: 100%;
           flex: 1 1 auto;
           min-height: 0;
           overflow-y: auto;
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
-          background: linear-gradient(180deg, rgba(251,255,253,.98), rgba(243,250,247,.98));
+          background: transparent;
+          box-sizing: border-box;
         }
 
         .nl-history-scroll::-webkit-scrollbar {
@@ -706,24 +681,27 @@ export default function History() {
 
         .nl-history-container {
           width: 100%;
-          padding: 16px 14px 130px;
-          margin: 0 auto;
+          max-width: 100%;
+          box-sizing: border-box;
+          padding: 16px 14px 28px;
+          margin: 0;
         }
 
         /* --- HEADER --- */
         .nl-history-header {
           position: sticky;
-          top: 0;
+          top: -16px;
           z-index: 30;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 6px 0 14px;
-          background: rgba(251, 255, 253, 0.94);
+          padding: 10px 0 12px;
+          background: rgba(251, 248, 240, 0.96);
           backdrop-filter: blur(14px);
           -webkit-backdrop-filter: blur(14px);
-          border-bottom: 1px solid #dcefe7;
+          border-bottom: 1px solid rgba(31, 77, 51, 0.1);
           margin-bottom: 14px;
+          box-sizing: border-box;
         }
 
         .nl-header-center {
@@ -855,12 +833,13 @@ export default function History() {
         /* --- TABS --- */
         .nl-tabs-wrapper {
           position: sticky;
-          top: 60px;
+          top: 48px;
           z-index: 25;
           padding: 4px 0 12px;
-          background: rgba(244, 251, 248, 0.94);
+          background: rgba(251, 248, 240, 0.96);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
+          box-sizing: border-box;
         }
 
         .nl-tabs-bar {
@@ -1356,21 +1335,6 @@ export default function History() {
 
         .nl-empty-action:hover {
           transform: translateY(-2px);
-        }
-
-        /* --- RESPONSIVE DESKTOP FRAME --- */
-        @media (min-width: 641px) {
-          .nl-history-page {
-            justify-content: center;
-            padding: 16px 0;
-          }
-
-          .nl-history-scroll {
-            height: min(860px, calc(100dvh - 32px));
-            border-radius: 28px;
-            box-shadow: 0 20px 60px rgba(20, 45, 34, 0.16);
-            border: 1px solid rgba(196, 230, 215, 0.8);
-          }
         }
 
         @media (max-width: 380px) {

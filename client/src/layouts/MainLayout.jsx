@@ -1,16 +1,17 @@
 import React from 'react';
-import { Navbar } from '../components/Navbar';
+import BrandLogo from '../components/BrandLogo';
+import { BottomNav } from '../components/BottomNav';
 
 export const MainLayout = ({ children }) => {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
-      <main style={{ flex: 1, padding: '2rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+    <div className="kl-page kl-fade-up" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <header className="kl-header">
+        <BrandLogo size={36} tagline={false} />
+      </header>
+      <main style={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', overflowX: 'hidden', padding: '16px 16px 36px', width: '100%', boxSizing: 'border-box' }}>
         {children}
       </main>
-      <footer style={{ textAlign: 'center', padding: '2rem', color: '#6b7280', fontSize: '0.875rem' }}>
-        NutriLens © 2026 — AI Powered Nutrition & Macro Scanner
-      </footer>
+      <BottomNav active="home" />
     </div>
   );
 };

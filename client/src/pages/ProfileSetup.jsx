@@ -3,8 +3,9 @@ import { ArrowLeft, Check, ChevronRight, UserRound, Sparkles } from 'lucide-reac
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getProfileApi, saveProfileApi } from '../services/api';
-import { FOOD_AVATARS, FoodAvatar } from '../components/FoodAvatar';
-import khanaLensLogo from '../assets/images/KhanaLens.png';
+import { Avatar, PEOPLE_AVATARS } from '../components/Avatar';
+import AvatarPicker from '../components/AvatarPicker';
+import BrandLogo from '../components/BrandLogo';
 
 /* Finds any font file in src/assets/fonts. Does not break the page if the folder is empty. */
 const fontFiles = import.meta.glob('../assets/fonts/*.{ttf,otf,woff2}', {
@@ -42,17 +43,16 @@ ${fontFaceRule}
 }
 
 .setup-page {
-  min-height: 100dvh;
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(31, 77, 51, 0.05), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgba(63, 164, 122, 0.05), transparent 45%),
-    #FFFFFF;
+  flex-direction: column;
+  padding: 0;
+  background: transparent;
   color: #1F4D33;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -60,23 +60,20 @@ ${fontFaceRule}
   color: #1F4D33;
   font-size: 14px;
   font-weight: 600;
+  padding: 40px;
 }
 
-/* Beige glass card */
+/* Beige glass card fills the app frame */
 .setup-card {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  padding: 26px 24px 28px;
-  border-radius: 34px;
-  background: linear-gradient(170deg, #FBF8F0 0%, #F7F1E4 60%, #F2EADA 100%);
-  border: 1px solid rgba(31, 77, 51, 0.1);
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
-    0 30px 60px rgba(31, 77, 51, 0.12);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  animation: setup-fade-in 0.35s cubic-bezier(0.2, 0.8, 0.25, 1);
+  flex: 1 1 auto;
+  padding: 20px 16px 36px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  box-sizing: border-box;
 }
 
 .setup-card::before {
@@ -400,20 +397,29 @@ ${fontFaceRule}
 .setup-avatar-upload-label {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   margin-left: auto;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 12px;
-  background: linear-gradient(180deg, #4E8266 0%, #1F4D33 100%);
-  color: #FBF7EE;
+  border: 1px solid rgba(31, 77, 51, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(247, 241, 228, 0.95) 100%);
+  color: #1F4D33;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(31, 77, 51, 0.2);
-  transition: transform 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 10px rgba(31, 77, 51, 0.08);
+  transition: all 0.2s ease;
+}
+.setup-avatar-upload-label svg {
+  color: #3FA47A;
 }
 .setup-avatar-upload-label:hover {
+  background: #FFFFFF;
   transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 6px 14px rgba(31, 77, 51, 0.12);
+}
+.setup-avatar-upload-label:active {
+  transform: scale(0.98);
 }
 .setup-avatar-upload-label input {
   display: none;
@@ -564,6 +570,28 @@ ${fontFaceRule}
     animation: none !important;
   }
 }
+
+.setup-avatar-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.setup-avatar-tabs button {
+  flex: 1; padding: 7px 10px; border-radius: 12px;
+  border: 1px solid rgba(31, 77, 51, 0.18); background: rgba(255, 255, 255, 0.7);
+  color: #1F4D33; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.setup-avatar-tabs button.selected {
+  background: linear-gradient(180deg, #4E8266 0%, #1F4D33 100%);
+  color: #FBF7EE; border-color: transparent;
+}
+.setup-people-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 8px; max-height: 240px; overflow-y: auto; padding: 2px;
+}
+.setup-people-grid .setup-avatar-choice-btn { padding: 2px; }
+.people-avatar {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block;
+}
+.setup-people-grid .people-avatar { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+.setup-avatar-wrap .people-avatar { width: 100%; height: 100%; border-radius: 10px; }
+.setup-avatar-upload-row { display: flex; justify-content: flex-end; margin-top: 10px; }
 `;
 
 const steps = ['Basic info', 'Body', 'Health', 'Goals'];
@@ -605,6 +633,9 @@ export default function ProfileSetup() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [avatarTab, setAvatarTab] = useState(
+    String(defaultDraft.avatar).startsWith('person-') ? 'people' : 'food'
+  );
 
   useEffect(() => {
     if (!user?.id) return;
@@ -612,7 +643,7 @@ export default function ProfileSetup() {
       .then((response) => {
         const profile = response.data.data;
         if (profile?.completed) {
-          navigate('/home', { replace: true });
+          navigate('/progress', { replace: true });
           return;
         }
         if (profile) {
@@ -695,7 +726,7 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="setup-page">
+    <div className="kl-page setup-page kl-fade-up">
       <style>{setupCss}</style>
 
       <main className="setup-card">
@@ -708,19 +739,9 @@ export default function ProfileSetup() {
           >
             <ArrowLeft size={17} />
           </button>
-          <div className="setup-brand">
-            <div className="setup-brand-logo">
-              <img src={khanaLensLogo} alt="KhanaLens logo" />
-            </div>
-            <span>
-              <strong>
-                Khana<span>Lens</span>
-              </strong>
-              <small>Complete your profile</small>
-            </span>
-          </div>
+          <BrandLogo size={38} tagline={false} />
           <div className="setup-avatar-wrap">
-            <FoodAvatar avatar={draft.avatar} alt="Selected food avatar" />
+            <Avatar avatar={draft.avatar} alt="Selected avatar" />
           </div>
         </header>
 
@@ -811,31 +832,11 @@ export default function ProfileSetup() {
                 </div>
               </fieldset>
 
-              <div className="setup-avatar-picker-block">
-                <strong>Choose your avatar</strong>
-                <div className="setup-avatar-grid-row">
-                  {FOOD_AVATARS.map((option) => (
-                    <button
-                      type="button"
-                      key={option.id}
-                      className={`setup-avatar-choice-btn ${
-                        draft.avatar === option.id ? 'selected' : ''
-                      }`}
-                      onClick={() => update('avatar', option.id)}
-                    >
-                      <FoodAvatar avatar={option.id} alt={option.label} />
-                    </button>
-                  ))}
-                  <label className="setup-avatar-upload-label">
-                    <Sparkles size={13} /> Upload Photo
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      onChange={handleImageUpload}
-                    />
-                  </label>
-                </div>
-              </div>
+              <AvatarPicker
+                value={draft.avatar}
+                onChange={(id) => update('avatar', id)}
+                onUpload={handleImageUpload}
+              />
             </section>
           )}
 

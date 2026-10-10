@@ -15,6 +15,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { generateMealPlanApi, getMealPlanApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import BrandLogo from '../components/BrandLogo';
 
 // Rich SVG Meal Plate Icons tailored to Breakfast, Lunch, Snack, Dinner
 const MealPlate = ({ type = '' }) => {
@@ -266,7 +267,7 @@ export default function MealPlanner() {
   };
 
   return (
-    <div className="planner-page">
+    <div className="kl-page planner-page kl-fade-up">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="planner-toast" role="status">
@@ -285,9 +286,7 @@ export default function MealPlanner() {
           >
             <ArrowLeft size={20} />
           </button>
-          <div className="planner-header-title">
-            <h1>7-Day Meal Plan</h1>
-          </div>
+          <BrandLogo size={36} tagline={false} />
           <div className="planner-header-actions">
             {plan && (
               <>

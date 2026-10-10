@@ -4,14 +4,11 @@ import {
   ArrowLeft,
   ChevronDown,
   Flame,
-  Home,
-  LayoutDashboard,
-  ScanLine,
-  History,
-  CircleUserRound,
   TrendingUp,
 } from 'lucide-react';
 import { getProgressApi } from '../services/api';
+import { BottomNav } from '../components/BottomNav';
+import BrandLogo from '../components/BrandLogo';
 
 const progressData = {
   kcal: {
@@ -133,12 +130,12 @@ export const Goals = () => {
   const completionFor = (key) => Number(progress?.completion?.[key] || 0);
 
   return (
-    <div className="goals-viewport">
-      <main className="goals-page">
+    <div className="kl-page goals-viewport kl-fade-up">
+      <main className="goals-page" style={{ background: 'transparent' }}>
         <div className={`goals-sticky-header ${headerScrolled ? 'scrolled' : ''}`}>
           <header className="goals-topbar">
             <Link to="/progress" className="goals-back" aria-label="Back to Today's Nutrition"><ArrowLeft size={20} /></Link>
-            <div><span className="eyebrow">YOUR JOURNEY</span><h1>Goal Progress</h1></div>
+            <BrandLogo size={36} tagline={false} />
             <div className="period-picker">
               <button className="period-button" onClick={() => setPeriodOpen((open) => !open)} aria-expanded={periodOpen} aria-haspopup="listbox">
                 {periodOptions.find((option) => option.id === period).label} <ChevronDown size={15} />
@@ -167,9 +164,10 @@ export const Goals = () => {
           {[['Calories', 'calories', '#18B895'], ['Protein', 'protein', '#7a8dd8'], ['Carbs', 'carbs', '#f0ad62'], ['Fat', 'fat', '#6db8b0']].map(([label, key, color]) => <div className="completion-row" key={key}><div><span>{label}</span><strong>{completionFor(key)}%</strong></div><div className="completion-track"><span className="completion-fill" style={{ width: '100%', '--target-width': `${Math.min(completionFor(key), 100)}%`, background: color }} /></div></div>)}
         </section>
 
-        <p className="goal-note">Small, consistent steps add up. Keep tracking to stay on course.</p>
-        <nav className="dashboard-nav goals-nav" aria-label="Main navigation"><Link to="/home"><Home size={18} /><span>Home</span></Link><Link className="active" to="/progress/goals"><LayoutDashboard size={18} /><span>Progress</span></Link><Link className="scan-nav" to="/scan"><span><ScanLine size={24} /><b aria-hidden="true">✦</b></span><small>Scan</small></Link><Link to="/history"><History size={18} /><span>History</span></Link><Link to="/profile"><CircleUserRound size={19} /><span>Profile</span></Link></nav>
+        <p className="goal-note" style={{ marginBottom: '24px' }}>Small, consistent steps add up. Keep tracking to stay on course.</p>
       </main>
+
+      <BottomNav active="progress" />
     </div>
   );
 };

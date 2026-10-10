@@ -5,14 +5,11 @@ import {
   ChevronRight,
   Calendar,
   Flame,
-  Home,
-  LayoutGrid,
-  ScanLine,
-  History,
-  User,
 } from "lucide-react";
 import { getProgressApi } from "../services/api";
 import mealImage from "../assets/images/HealthyFood-2.jpg";
+import { BottomNav } from "../components/BottomNav";
+import BrandLogo from "../components/BrandLogo";
 
 function Progress() {
   const navigate = useNavigate();
@@ -146,44 +143,48 @@ function Progress() {
         }
 
         .knl-page-bg {
-          background: linear-gradient(180deg, #EAF7F3 0%, #F5FAF8 46%, #EEF6F3 100%);
-          min-height: 100vh;
+          background: transparent;
+          height: 100%;
           width: 100%;
           display: flex;
-          justify-content: center;
-          padding: 24px 0 120px;
+          flex-direction: column;
           box-sizing: border-box;
+          overflow: hidden;
         }
 
-        .knl-progress-card {
-          background: #FCFFFE;
-          border-radius: 24px;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-          height: fit-content;
-          padding-bottom: 120px !important;
+        .knl-progress-scroll {
+          flex: 1 1 auto;
+          overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          padding: 14px 14px 28px;
+          box-sizing: border-box;
+          width: 100%;
         }
 
         .knl-sticky-shell {
           position: sticky;
-          top: 0;
+          top: -14px;
           z-index: 30;
-          margin: -24px -20px 14px;
-          padding: 12px 20px 8px;
-          background: rgba(255,255,255,.96);
+          margin: -14px -14px 14px;
+          padding: 12px 14px 8px;
+          background: rgba(251, 248, 240, 0.96);
           backdrop-filter: blur(14px);
-          border-bottom: 1px solid #E8F1EE;
+          -webkit-backdrop-filter: blur(14px);
+          border-bottom: 1px solid rgba(31, 77, 51, 0.1);
           box-shadow: 0 3px 16px rgba(44, 106, 87, .04);
+          box-sizing: border-box;
           transition: padding .28s ease, box-shadow .28s ease;
         }
 
         .knl-sticky-shell.scrolled { padding-top: 7px; padding-bottom: 6px; box-shadow: 0 8px 22px rgba(44, 106, 87, .10); }
-        .knl-progress-heading { min-height: 42px; padding: 8px 0 2px; background: transparent; transition: padding .28s ease, transform .28s ease; }
+        .knl-progress-heading { min-height: 42px; padding: 4px 0 2px; background: transparent; transition: padding .28s ease, transform .28s ease; }
         .knl-sticky-shell.scrolled .knl-progress-heading { padding-top: 4px; transform: scale(.96); transform-origin: center top; }
 
-        .knl-summary-card, .knl-nutrients-card, .knl-meals-card { border: 1px solid #D9EEE7; border-radius: 20px; background: #FFFFFF; box-shadow: 0 10px 24px rgba(44, 106, 87, .08); animation: knl-rise .5s ease both; }
+        .knl-summary-card, .knl-nutrients-card, .knl-meals-card { border: 1px solid #D9EEE7; border-radius: 20px; background: #FFFFFF; box-shadow: 0 10px 24px rgba(44, 106, 87, .08); animation: knl-rise .5s ease both; box-sizing: border-box; }
         .knl-summary-card { padding: 18px 12px 8px; animation-delay: .05s; background: linear-gradient(145deg, #FFFFFF 0%, #F2FBF8 100%); border-top: 3px solid #2AB594; }
         .knl-nutrients-card { margin-top: 14px; padding: 16px 14px 4px; animation-delay: .12s; background: #FBFFFD; border-top: 3px solid #2AB594; }
-        .knl-meals-card { margin-top: 14px; padding: 14px 12px 4px; animation-delay: .2s; background: #FFFFFF; border-top: 3px solid #F0A928; }
+        .knl-meals-card { margin-top: 14px; margin-bottom: 16px; padding: 14px 12px 10px; animation-delay: .2s; background: #FFFFFF; border-top: 3px solid #F0A928; }
         .knl-nutrient-row { animation: knl-rise .45s ease both; }
         .knl-progress-fill { animation: knl-fill 1.45s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--row-index) * 70ms); }
         .knl-meals-card .knl-meal-card {
@@ -254,22 +255,6 @@ function Progress() {
 
         /* Mobile */
         @media (max-width: 480px) {
-          .knl-page-bg {
-            padding: 0;
-            display: block;
-            min-height: 100vh;
-          }
-
-          .knl-progress-card {
-            width: 100%;
-            max-width: 380px;
-            margin: 0 auto;
-            border-radius: 0;
-            box-shadow: none;
-            min-height: auto;
-            padding-bottom: 120px !important;
-          }
-
           /* Whole page scrolls */
           .knl-meals-list {
             max-height: none;
@@ -300,18 +285,8 @@ function Progress() {
         }
       `}</style>
 
-      <div className="knl-page-bg">
-        <div
-          className="knl-progress-card"
-          style={{
-            maxWidth: 380,
-            width: "100%",
-            fontFamily: "sans-serif",
-            padding: "24px 20px",
-            boxSizing: "border-box",
-            position: "relative",
-          }}
-        >
+      <div className="kl-page knl-page-bg kl-fade-up">
+        <div className="knl-progress-scroll">
           <div className={`knl-sticky-shell ${headerScrolled ? "scrolled" : ""}`}>
             <div
               className="knl-progress-heading"
@@ -325,40 +300,22 @@ function Progress() {
                 type="button"
                 onClick={() => navigate("/home")}
                 aria-label="Back to dashboard"
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 4,
-                  cursor: "pointer",
-                  display: "flex",
-                }}
+                className="kl-header-btn"
+                style={{ width: 38, height: 38, borderRadius: 12 }}
               >
-                <ChevronLeft size={22} color="#1F2937" />
+                <ChevronLeft size={20} color="#1F4D33" />
               </button>
-              <h1
-                style={{
-                  fontSize: 17,
-                  fontWeight: 750,
-                  color: "#111827",
-                  margin: 0,
-                }}
-              >
-                Today's Nutrition
-              </h1>
+              <BrandLogo size={36} tagline={false} />
               <button
                 onClick={() => {
                   setCalendarOpen((open) => !open);
                   navigate("/progress/goals");
                 }}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 4,
-                  cursor: "pointer",
-                }}
+                className="kl-header-btn"
+                style={{ width: 38, height: 38, borderRadius: 12 }}
                 aria-label="Goal Progress Details"
               >
-                <Calendar size={18} color="#6B7280" />
+                <Calendar size={18} color="#1F4D33" />
               </button>
             </div>
           </div>
@@ -724,34 +681,10 @@ function Progress() {
               ))}
             </div>
           </div>
-
-          {/* Bottom Navigation */}
-          <nav className="dashboard-nav" aria-label="Main navigation">
-            <Link to="/home">
-              <Home size={18} />
-              <span>Home</span>
-            </Link>
-            <Link className="active" to="/progress">
-              <LayoutGrid size={18} />
-              <span>Progress</span>
-            </Link>
-            <Link className="scan-nav" to="/scan">
-              <span>
-                <ScanLine size={24} />
-                <b aria-hidden="true">✦</b>
-              </span>
-              <small>Scan</small>
-            </Link>
-            <Link to="/history">
-              <History size={18} />
-              <span>History</span>
-            </Link>
-            <Link to="/profile">
-              <User size={19} />
-              <span>Profile</span>
-            </Link>
-          </nav>
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav active="progress" />
       </div>
     </>
   );

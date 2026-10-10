@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { firebaseSignIn, firebaseSignInWithGoogle, firebaseSignUp } from "../services/firebaseAuth";
+import BrandLogo from "../components/BrandLogo";
 
 /* Finds any font file in src/assets/fonts. Does not break the page if the folder is empty. */
 const fontFiles = import.meta.glob("../assets/fonts/*.{ttf,otf,woff2}", {
@@ -60,10 +61,7 @@ ${fontFaceRule}
 }
 
 .login-page {
-  background:
-    radial-gradient(circle at 15% 10%, rgba(31, 77, 51, 0.05), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgba(63, 164, 122, 0.05), transparent 45%),
-    #FFFFFF;
+  background: transparent;
 }
 
 /* Beige glass card */
@@ -345,7 +343,7 @@ export default function Login({ initialSignup = false }) {
     try {
       const response = await firebaseSignIn(email, password);
       login(response.token, response.user);
-      navigate("/home");
+      navigate("/progress");
     } catch (error) {
       setErrors({ form: error.message || "Unable to log in." });
     } finally {
@@ -414,9 +412,12 @@ export default function Login({ initialSignup = false }) {
   }
 
   return (
-    <div className="login-page" style={styles.page}>
+    <div className="kl-page login-page kl-fade-up" style={styles.page}>
       <style>{loginCss}</style>
       <div className="login-card" style={styles.card}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+          <BrandLogo size={46} tagline={false} />
+        </div>
         <div style={styles.sliderWindow}>
           <div
             style={{
@@ -669,12 +670,13 @@ export default function Login({ initialSignup = false }) {
 const styles = {
   page: {
     position: "relative",
-    minHeight: "100vh",
+    minHeight: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: "20px",
+    padding: "24px 16px",
     boxSizing: "border-box",
+    background: "transparent",
   },
 
   card: {

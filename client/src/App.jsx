@@ -16,6 +16,9 @@ import History from './pages/History';
 import Setting from './pages/Setting';
 import ProfileSetup from './pages/ProfileSetup';
 import MealPlanner from './pages/MealPlanner';
+import StreakPage from './pages/StreakPage';
+import UpgradePage from './pages/UpgradePage';
+import PaymentPage from './pages/PaymentPage';
 import { useAuth } from './hooks/useAuth';
 
 function ProtectedRoute() {
@@ -52,30 +55,35 @@ function AppRoutes() {
   const location = useLocation();
 
   return (
-    <div className="route-transition" key={location.pathname}>
-      <Routes>
-        <Route path="/" element={<SplashPage />} />
-        <Route path="/onboarding" element={<SplashPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Login initialSignup />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/scan" element={<Scan />} />
-          <Route path="/scan/analyzing" element={<Scan />} />
-          <Route path="/scan/result" element={<ResultRoute />} />
-          <Route path="/food/:id" element={<ItemDetailsRoute />} />
-          <Route path="/item-details" element={<ItemDetailsRoute />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/progress" element={<Progress />} />
-          <Route path="/progress/goals" element={<Goals />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
-          <Route path="/profile" element={<Setting />} />
-          <Route path="/profile/setup" element={<ProfileSetup />} />
-          <Route path="/meal-plan" element={<MealPlanner />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+    <div className="kl-app-frame">
+      <div className="route-transition kl-page-route" key={location.pathname}>
+        <Routes>
+          <Route path="/" element={<SplashPage />} />
+          <Route path="/onboarding" element={<SplashPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Login initialSignup />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/scan" element={<Scan />} />
+            <Route path="/scan/analyzing" element={<Scan />} />
+            <Route path="/scan/result" element={<ResultRoute />} />
+            <Route path="/food/:id" element={<ItemDetailsRoute />} />
+            <Route path="/item-details" element={<ItemDetailsRoute />} />
+            <Route path="/goals" element={<Goals />} />
+            <Route path="/progress" element={<Progress />} />
+            <Route path="/progress/goals" element={<Goals />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+            <Route path="/profile" element={<Setting />} />
+            <Route path="/profile/setup" element={<ProfileSetup />} />
+            <Route path="/meal-plan" element={<MealPlanner />} />
+            <Route path="/streak" element={<StreakPage />} />
+            <Route path="/upgrade" element={<UpgradePage />} />
+            <Route path="/payment" element={<PaymentPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
     </div>
   );
 }

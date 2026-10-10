@@ -91,46 +91,36 @@ body,
   font-family: 'Google Sans Local', 'Google Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
-/* Outside of the card: white */
-.splash-viewport.app-viewport {
+.splash-viewport {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   width: 100%;
-  min-height: 100dvh;
-  height: 100dvh;
-  padding: 16px;
+  flex: 1;
+  min-height: 100%;
+  padding: 0;
   box-sizing: border-box;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(31, 77, 51, 0.04), transparent 45%),
-    radial-gradient(circle at 85% 90%, rgba(63, 164, 122, 0.04), transparent 45%),
-    #FFFFFF !important;
+  background: transparent !important;
 }
 
-/* Card: soft cream glass, centered */
+/* Card fills the beige app frame */
 .splash-viewport .splash-card {
   position: relative;
-  flex: 0 0 auto;
-  margin: 0 auto;
-  width: min(100%, 390px);
-  height: min(860px, calc(100dvh - 32px));
-  min-height: 0;
+  flex: 1;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
   padding: clamp(36px, 7dvh, 60px) 26px 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  border-radius: 34px;
-  background:
-    linear-gradient(170deg, #FBF8F0 0%, #F7F1E4 60%, #F2EADA 100%) !important;
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(31, 77, 51, 0.1) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
-    0 30px 60px rgba(31, 77, 51, 0.12) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
   color: #1F4D33 !important;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Background layers: soft weave, light grain, faint aperture */
@@ -187,7 +177,7 @@ body,
   text-align: center;
 }
 
-/* Logo as a glass bubble */
+/* Logo as a glass bubble - unclipped outer ring */
 .splash-viewport .splash-logo {
   width: 92px;
   height: 92px;
@@ -200,16 +190,16 @@ body,
     0 0 0 1px rgba(31, 77, 51, 0.15),
     0 16px 30px rgba(31, 77, 51, 0.18) !important;
   padding: 0 !important;
-  overflow: hidden;
+  overflow: visible !important;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .splash-viewport .splash-logo img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  width: 86%;
+  height: 86%;
+  border-radius: 0;
   object-fit: contain;
   transform: none !important;
   display: block;
@@ -558,7 +548,7 @@ function SplashPage() {
   const currentScan = scanResults[activeIndex];
 
   return (
-    <div className="app-viewport splash-viewport">
+    <div className="kl-page splash-viewport">
       <style>{splashCss}</style>
       <main className="mobile-card splash-card">
         <div className="splash-weave" aria-hidden="true" />

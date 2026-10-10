@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft } from "lucide-react";
+import BrandLogo from "../components/BrandLogo";
 
 const defaultItem = {
   name: "Grilled Chicken",
@@ -39,7 +40,7 @@ export default function ItemDetails({ item = defaultItem, onBack }) {
     ];
 
   return (
-    <div className="item-details-page">
+    <div className="kl-page item-details-page kl-fade-up">
       <div className="item-details-card">
         <div className="item-details-nav result-header">
           <button
@@ -49,7 +50,7 @@ export default function ItemDetails({ item = defaultItem, onBack }) {
           >
             <ChevronLeft size={20} strokeWidth={2.4} />
           </button>
-          <div className="result-header-title"><small>KHANALENS</small><strong>Food Details</strong></div>
+          <BrandLogo size={36} tagline={false} />
           <span className="item-details-nav-spacer" aria-hidden="true" />
         </div>
 

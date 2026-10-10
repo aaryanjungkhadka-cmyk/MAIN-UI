@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { addTrackedMeal } from "../services/tracker";
 import { saveMealApi } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
+import BrandLogo from "../components/BrandLogo";
 
 /**
  * FoodAnalysisResult — Page 7: shows the result of a completed food scan.
@@ -108,7 +109,7 @@ export default function FoodAnalysisResult({
   };
 
   return (
-    <div className="result-page">
+    <div className="kl-page result-page kl-fade-up">
       {removalCandidate && (
         <div className="remove-item-dialog-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setRemovalCandidate(null); }}>
           <section className="remove-item-dialog" role="alertdialog" aria-modal="true" aria-labelledby="remove-item-title" aria-describedby="remove-item-description">
@@ -155,7 +156,7 @@ export default function FoodAnalysisResult({
             </svg>
           </button>
 
-          <div className="result-header-title"><small>KHANALENS</small><strong>Scan Result</strong></div>
+          <BrandLogo size={36} tagline={false} />
 
           <button onClick={handleSaveToHistory} aria-label={savedToHistory ? "Saved to history" : "Save to history"} aria-pressed={savedToHistory} className={`icon-btn ${savedToHistory ? "icon-btn-saved" : ""}`} disabled={saving}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill={savedToHistory ? "#168363" : "none"}>

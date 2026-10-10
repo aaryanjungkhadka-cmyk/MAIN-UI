@@ -24,6 +24,10 @@ import { useAuth } from "../hooks/useAuth";
 import khanaLensLogo from "../assets/images/KhanaLens.jpg";
 import { getHistoryApi, getProfileApi, saveProfileApi } from "../services/api";
 import { FOOD_AVATARS, FoodAvatar } from "../components/FoodAvatar";
+import { Avatar } from "../components/Avatar";
+import { BottomNav } from "../components/BottomNav";
+import BrandLogo from "../components/BrandLogo";
+import AvatarPicker from "../components/AvatarPicker";
 import { useLanguage } from "../context/LanguageContext";
 
 const defaults = {
@@ -142,9 +146,9 @@ export default function ProfileSettings() {
 
   const letters = useMemo(
     () => (
-      <FoodAvatar
+      <Avatar
         avatar={profile.avatar}
-        alt={`${profile.name || "User"} food avatar`}
+        alt={`${profile.name || "User"} avatar`}
       />
     ),
     [profile.avatar, profile.name]
@@ -285,24 +289,28 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="profile-viewport">
+    <div className="kl-page profile-viewport kl-fade-up">
       <style>{`
         .profile-viewport {
-          min-height: 100dvh;
-          background: linear-gradient(155deg, #dff7ed 0%, #f4fbf8 38%, #e9f6f1 100%);
+          min-height: 100%;
+          height: 100%;
+          background: transparent;
           color: #173b32;
           display: flex;
-          justify-content: center;
-          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          overflow-y: auto;
-          -webkit-overflow-scrolling: touch;
+          flex-direction: column;
+          font-family: var(--kl-font);
+          overflow: hidden;
         }
         .profile-shell {
-          width: min(100%, 440px);
-          min-height: 100dvh;
+          width: 100%;
+          flex: 1 1 auto;
+          min-height: 0;
           position: relative;
-          padding: 20px 18px 150px;
+          padding: 20px 16px 24px;
+          overflow-y: auto;
           overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          box-sizing: border-box;
         }
         .profile-shell:before,
         .profile-shell:after {
@@ -615,6 +623,7 @@ export default function ProfileSettings() {
           justify-content: center;
           gap: 8px;
           margin-top: 16px;
+          margin-bottom: 24px;
           padding: 14px;
           border: 1px solid #f2d8d4;
           border-radius: 17px;
@@ -981,15 +990,7 @@ export default function ProfileSettings() {
             >
               <ArrowLeft size={19} />
             </button>
-            <div className="profile-brand">
-              <img src={khanaLensLogo} alt="KhanaLens logo" />
-              <span className="profile-brand-copy">
-                <strong>
-                  Khana<span>Lens</span>
-                </strong>
-                <small>Scan. Analyze. Eat Smarter.</small>
-              </span>
-            </div>
+            <BrandLogo size={40} />
           </header>
 
           <section className="profile-hero">
@@ -1104,33 +1105,9 @@ export default function ProfileSettings() {
             <LogOut size={16} /> Log out
           </button>
         </div>
-
-        <nav className="dashboard-nav" aria-label="Main navigation">
-          <Link to="/home">
-            <Home size={18} />
-            <span>Home</span>
-          </Link>
-          <Link to="/progress">
-            <LayoutDashboard size={18} />
-            <span>Progress</span>
-          </Link>
-          <Link className="scan-nav" to="/scan">
-            <span>
-              <ScanLine size={24} />
-              <b aria-hidden="true">✦</b>
-            </span>
-            <small>Scan</small>
-          </Link>
-          <Link to="/history">
-            <History size={18} />
-            <span>History</span>
-          </Link>
-          <Link className="active" to="/profile">
-            <CircleUserRound size={19} />
-            <span>Profile</span>
-          </Link>
-        </nav>
       </main>
+
+      <BottomNav active="profile" />
 
       {saved && (
         <div className="profile-toast">
@@ -1165,26 +1142,12 @@ export default function ProfileSettings() {
 
             {editing && (
               <>
-                <AvatarChooser
-                  avatar={draft.avatar}
+                <AvatarPicker
+                  value={draft.avatar}
                   onChange={(avatar) => setDraft({ ...draft, avatar })}
+                  onUpload={handleImageUpload}
                 />
-                <form onSubmit={save}>
-                  <div className="profile-picture-picker">
-                    <div className="profile-picture-preview">
-                      <FoodAvatar avatar={draft.avatar} alt="Profile preview" />
-                    </div>
-                    <div className="profile-picture-copy">
-                      <strong>Upload custom photo</strong>
-                      JPG, PNG, or WebP · choose a clear image.
-                      <input
-                        className="profile-picture-input"
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        onChange={handleImageUpload}
-                      />
-                    </div>
-                  </div>
+                <form onSubmit={save} style={{ marginTop: "16px" }}>
 
                   <label className="profile-form-label" htmlFor="profile-name">
                     Full name

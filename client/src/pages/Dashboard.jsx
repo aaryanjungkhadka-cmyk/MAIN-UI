@@ -14,11 +14,11 @@ export const Dashboard = () => {
 
   return (
     <div>
-      <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1.5rem' }}>
+      <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 1rem 0', color: '#1F4D33' }}>
         Nutrition Dashboard & History
       </h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
         {logs.map((item) => (
           <FoodCard
             key={item._id}
