@@ -50,7 +50,7 @@ export default function ItemDetails({ item = defaultItem, onBack }) {
           >
             <ChevronLeft size={20} strokeWidth={2.4} />
           </button>
-          <BrandLogo size={36} tagline={false} />
+          <BrandLogo size={44} tagline={false} />
           <span className="item-details-nav-spacer" aria-hidden="true" />
         </div>
 

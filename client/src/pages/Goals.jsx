@@ -135,7 +135,7 @@ export const Goals = () => {
         <div className={`goals-sticky-header ${headerScrolled ? 'scrolled' : ''}`}>
           <header className="goals-topbar">
             <Link to="/progress" className="goals-back" aria-label="Back to Today's Nutrition"><ArrowLeft size={20} /></Link>
-            <BrandLogo size={36} tagline={false} />
+            <BrandLogo size={44} tagline={false} />
             <div className="period-picker">
               <button className="period-button" onClick={() => setPeriodOpen((open) => !open)} aria-expanded={periodOpen} aria-haspopup="listbox">
                 {periodOptions.find((option) => option.id === period).label} <ChevronDown size={15} />

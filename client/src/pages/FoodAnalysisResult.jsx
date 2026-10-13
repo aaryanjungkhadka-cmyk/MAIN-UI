@@ -156,7 +156,7 @@ export default function FoodAnalysisResult({
             </svg>
           </button>
 
-          <BrandLogo size={36} tagline={false} />
+          <BrandLogo size={44} tagline={false} />
 
           <button onClick={handleSaveToHistory} aria-label={savedToHistory ? "Saved to history" : "Save to history"} aria-pressed={savedToHistory} className={`icon-btn ${savedToHistory ? "icon-btn-saved" : ""}`} disabled={saving}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill={savedToHistory ? "#168363" : "none"}>

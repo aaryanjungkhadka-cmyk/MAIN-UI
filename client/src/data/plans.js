@@ -1,3 +1,5 @@
+export const CURRENCY = 'Rs.';
+
 export const PLANS = [
   {
     id: 'free',
@@ -11,16 +13,16 @@ export const PLANS = [
   {
     id: 'plus',
     name: 'Plus',
-    monthly: 9,
-    yearly: 90,
+    monthly: 499,
+    yearly: 4990,
     tagline: 'For people building a steady habit',
     features: ['Everything in Free', 'Full meal history', 'Streak insights', 'Weekly progress report'],
   },
   {
     id: 'pro',
     name: 'Pro',
-    monthly: 19,
-    yearly: 190,
+    monthly: 999,
+    yearly: 9990,
     tagline: 'For serious tracking and goals',
     features: ['Everything in Plus', 'Custom macro goals', 'Meal plan generator', 'Priority scanning'],
     highlight: true,
@@ -28,8 +30,8 @@ export const PLANS = [
   {
     id: 'max',
     name: 'Max',
-    monthly: 49,
-    yearly: 490,
+    monthly: 2499,
+    yearly: 24990,
     tagline: 'Everything, with the highest limits',
     features: ['Everything in Pro', 'Highest scan limits', 'Advanced analytics', 'Early access to new features'],
   },

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Sparkles, Zap } from 'lucide-react';
+import { Check, ShieldCheck, Sparkles, Zap } from 'lucide-react';
 import AppHeader from '../components/AppHeader';
 import { BottomNav } from '../components/BottomNav';
 import { PLANS } from '../data/plans';
 import { getProfileApi } from '../services/api';
+import { ConnectIpsLogo, EsewaLogo, FonepayLogo, KhaltiLogo, SctLogo } from '../components/PaymentLogos';
 
 export default function UpgradePage() {
   const navigate = useNavigate();
@@ -26,6 +27,11 @@ export default function UpgradePage() {
   return (
     <div className="kl-page upgrade-page-viewport kl-fade-up">
       <style>{`
+        .upgrade-page-viewport,
+        .upgrade-page-viewport * {
+          font-family: var(--kl-font) !important;
+        }
+
         .upgrade-page-viewport {
           height: 100%;
           display: flex;
@@ -169,35 +175,88 @@ export default function UpgradePage() {
 
         .upgrade-plan-header {
           display: flex;
-          align-items: baseline;
+          flex-direction: column;
+          gap: 6px;
+          margin-bottom: 10px;
+        }
+
+        .upgrade-plan-meta {
+          display: flex;
+          align-items: center;
           justify-content: space-between;
-          margin-bottom: 4px;
+          gap: 6px;
         }
 
         .upgrade-plan-name {
-          font-size: 18px;
+          font-size: 17px;
           font-weight: 800;
           color: #1F4D33;
           margin: 0;
+          letter-spacing: -0.3px;
         }
 
-        .upgrade-plan-price {
+        .upgrade-plan-current-tag {
+          font-size: 9.5px;
+          font-weight: 800;
+          padding: 2px 7px;
+          border-radius: 999px;
+          background: rgba(31, 77, 51, 0.1);
+          color: #1F4D33;
+          letter-spacing: 0.2px;
+          text-transform: uppercase;
+        }
+
+        .upgrade-plan-price-block {
           display: flex;
           align-items: baseline;
-          gap: 2px;
         }
 
-        .upgrade-plan-price strong {
-          font-size: 26px;
+        .upgrade-plan-price-free {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+        }
+
+        .upgrade-plan-price-free strong {
+          font-size: 24px;
           font-weight: 900;
           color: #1F4D33;
           letter-spacing: -0.5px;
+          line-height: 1;
         }
 
-        .upgrade-plan-price span {
+        .upgrade-plan-price-free span {
           font-size: 11px;
           font-weight: 600;
           color: rgba(31, 77, 51, 0.65);
+        }
+
+        .upgrade-plan-price-paid {
+          display: flex;
+          align-items: baseline;
+          gap: 3px;
+          flex-wrap: wrap;
+        }
+
+        .upgrade-currency-prefix {
+          font-size: 13px;
+          font-weight: 800;
+          color: #1F4D33;
+        }
+
+        .upgrade-amount-num {
+          font-size: 24px;
+          font-weight: 900;
+          color: #1F4D33;
+          letter-spacing: -0.5px;
+          line-height: 1;
+        }
+
+        .upgrade-period-suffix {
+          font-size: 11px;
+          font-weight: 600;
+          color: rgba(31, 77, 51, 0.65);
+          margin-left: 2px;
         }
 
         .upgrade-plan-tagline {
@@ -287,6 +346,59 @@ export default function UpgradePage() {
           animation: fade-toast 0.25s ease;
         }
 
+        .upgrade-nepal-payments {
+          margin-top: 24px;
+          padding: 18px 16px;
+          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.75);
+          border: 1px solid rgba(31, 77, 51, 0.12);
+          box-shadow: 0 10px 24px rgba(31, 77, 51, 0.06);
+          text-align: center;
+        }
+        .upgrade-nepal-title {
+          font-size: 13.5px;
+          font-weight: 800;
+          color: #1F4D33;
+          margin: 0 0 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+        .upgrade-nepal-subtitle {
+          font-size: 11px;
+          color: rgba(31, 77, 51, 0.7);
+          margin: 0 0 14px;
+        }
+        .upgrade-nepal-badges {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+        }
+        .upgrade-nepal-badges {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+        }
+        .upgrade-nepal-logo-card {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 7px 12px;
+          border-radius: 12px;
+          background: #FFFFFF;
+          border: 1px solid rgba(31, 77, 51, 0.12);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .upgrade-nepal-logo-card:hover {
+          transform: translateY(-1.5px);
+          box-shadow: 0 5px 12px rgba(31, 77, 51, 0.12);
+        }
+
         @keyframes fade-toast {
           from { opacity: 0; transform: translate(-50%, 8px); }
           to { opacity: 1; transform: translate(-50%, 0); }
@@ -348,10 +460,25 @@ export default function UpgradePage() {
                 )}
 
                 <div className="upgrade-plan-header">
-                  <h2 className="upgrade-plan-name">{plan.name}</h2>
-                  <div className="upgrade-plan-price">
-                    <strong>${price}</strong>
-                    <span>{plan.id === 'free' ? 'forever' : pricePeriod}</span>
+                  <div className="upgrade-plan-meta">
+                    <h2 className="upgrade-plan-name">{plan.name}</h2>
+                    {plan.current && (
+                      <span className="upgrade-plan-current-tag">Current</span>
+                    )}
+                  </div>
+                  <div className="upgrade-plan-price-block">
+                    {price === 0 ? (
+                      <div className="upgrade-plan-price-free">
+                        <strong>Free</strong>
+                        <span>forever</span>
+                      </div>
+                    ) : (
+                      <div className="upgrade-plan-price-paid">
+                        <span className="upgrade-currency-prefix">Rs.</span>
+                        <strong className="upgrade-amount-num">{price.toLocaleString()}</strong>
+                        <span className="upgrade-period-suffix">{pricePeriod}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -384,6 +511,34 @@ export default function UpgradePage() {
               </div>
             );
           })}
+        </div>
+
+        {/* Supported Nepali Payment Methods */}
+        <div className="upgrade-nepal-payments">
+          <div className="upgrade-nepal-title">
+            <ShieldCheck size={16} color="#1F4D33" />
+            <span>Supported Nepali Payment Gateways</span>
+          </div>
+          <p className="upgrade-nepal-subtitle">
+            Fast, secure local payments with instant Pro activation & OTP verification
+          </p>
+          <div className="upgrade-nepal-badges">
+            <div className="upgrade-nepal-logo-card" title="eSewa Wallet">
+              <EsewaLogo height={22} />
+            </div>
+            <div className="upgrade-nepal-logo-card" title="Khalti Digital Wallet">
+              <KhaltiLogo height={22} />
+            </div>
+            <div className="upgrade-nepal-logo-card" title="Fonepay QR">
+              <FonepayLogo height={22} />
+            </div>
+            <div className="upgrade-nepal-logo-card" title="ConnectIPS Bank Transfer">
+              <ConnectIpsLogo height={20} />
+            </div>
+            <div className="upgrade-nepal-logo-card" title="SCT / Nepali Debit Cards">
+              <SctLogo height={22} />
+            </div>
+          </div>
         </div>
       </div>
 

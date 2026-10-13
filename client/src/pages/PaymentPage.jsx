@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AlertCircle,
+  ArrowLeft,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -9,6 +10,7 @@ import {
   Lock,
   RotateCcw,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   Wallet,
   Zap,
@@ -17,6 +19,7 @@ import AppHeader from '../components/AppHeader';
 import { BottomNav } from '../components/BottomNav';
 import { PLANS } from '../data/plans';
 import { getProfileApi } from '../services/api';
+import { EsewaLogo, KhaltiLogo, SctLogo } from '../components/PaymentLogos';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -28,16 +31,26 @@ export default function PaymentPage() {
 
   const [selectedPlanId, setSelectedPlanId] = useState(initialPlanId);
   const [billingPeriod, setBillingPeriod] = useState(initialPeriod);
-  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' | 'wallet'
+  const [paymentMethod, setPaymentMethod] = useState('esewa'); // 'esewa' | 'khalti' | 'card'
   const [avatar, setAvatar] = useState(null);
 
-  // Form states
+  // eSewa Form State
+  const [esewaId, setEsewaId] = useState('');
+  const [esewaMpin, setEsewaMpin] = useState('');
+  const [esewaOtpStep, setEsewaOtpStep] = useState(false);
+  const [esewaOtp, setEsewaOtp] = useState(['', '', '', '', '', '']);
+
+  // Khalti Form State
+  const [khaltiMobile, setKhaltiMobile] = useState('');
+  const [khaltiMpin, setKhaltiMpin] = useState('');
+  const [khaltiOtpStep, setKhaltiOtpStep] = useState(false);
+  const [khaltiOtp, setKhaltiOtp] = useState(['', '', '', '', '', '']);
+
+  // Card Form State
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
   const [cardName, setCardName] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [saveCard, setSaveCard] = useState(true);
 
   // Promo code
   const [promoCode, setPromoCode] = useState('');
@@ -61,44 +74,24 @@ export default function PaymentPage() {
     return PLANS.find((p) => p.id === selectedPlanId) || PLANS[2]; // Default to Pro
   }, [selectedPlanId]);
 
-  const basePrice = useMemo(() => {
+  // Pricing in Nepali Rupees (NPR / Rs.)
+  const basePriceNpr = useMemo(() => {
     return billingPeriod === 'yearly' ? selectedPlan.yearly : selectedPlan.monthly;
   }, [selectedPlan, billingPeriod]);
 
-  const discountAmount = useMemo(() => {
+  const discountAmountNpr = useMemo(() => {
     if (!promoApplied) return 0;
-    return Math.round(basePrice * 0.2); // 20% discount
-  }, [basePrice, promoApplied]);
+    return Math.round(basePriceNpr * 0.2); // 20% discount
+  }, [basePriceNpr, promoApplied]);
 
-  const totalPrice = Math.max(0, basePrice - discountAmount);
+  const totalPriceNpr = Math.max(0, basePriceNpr - discountAmountNpr);
 
-  // Format card number with spaces (#### #### #### ####)
-  const handleCardNumberChange = (e) => {
-    const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
-    const formatted = raw.match(/.{1,4}/g)?.join(' ') || raw;
-    setCardNumber(formatted);
-  };
-
-  // Format MM/YY
-  const handleExpiryChange = (e) => {
-    let raw = e.target.value.replace(/\D/g, '').slice(0, 4);
-    if (raw.length >= 3) {
-      raw = `${raw.slice(0, 2)}/${raw.slice(2)}`;
-    }
-    setCardExpiry(raw);
-  };
-
-  // Format CVC
-  const handleCvcChange = (e) => {
-    const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
-    setCardCvc(raw);
-  };
-
+  // Apply promo
   const handleApplyPromo = (e) => {
     e.preventDefault();
     if (!promoCode.trim()) return;
     const clean = promoCode.trim().toUpperCase();
-    if (clean === 'KHANA20' || clean === 'WELCOME' || clean === 'PROMO') {
+    if (clean === 'KHANA20' || clean === 'WELCOME' || clean === 'PROMO' || clean === 'NEPAL') {
       setPromoApplied(true);
       setPromoError('');
     } else {
@@ -106,56 +99,80 @@ export default function PaymentPage() {
     }
   };
 
-  const handleSubmitPayment = (e) => {
+  // eSewa Submit
+  const handleEsewaLogin = (e) => {
     e.preventDefault();
     setFormError('');
-
-    if (paymentMethod === 'card') {
-      const cleanNum = cardNumber.replace(/\s/g, '');
-      if (cleanNum.length < 15) {
-        setFormError('Please enter a valid 16-digit card number.');
-        return;
-      }
-      if (cardExpiry.length < 5) {
-        setFormError('Please enter card expiration date (MM/YY).');
-        return;
-      }
-      if (cardCvc.length < 3) {
-        setFormError('Please enter a 3 or 4 digit security CVC.');
-        return;
-      }
-      if (!cardName.trim()) {
-        setFormError('Please enter the name on the card.');
-        return;
-      }
+    if (!esewaId.trim()) {
+      setFormError('Please enter your eSewa ID or Registered Mobile number.');
+      return;
+    }
+    if (esewaMpin.length < 4) {
+      setFormError('Please enter your 4-digit eSewa MPIN.');
+      return;
     }
 
     setIsProcessing(true);
-    setProcessingStage('Connecting to secure 256-bit gateway...');
+    setProcessingStage('Authenticating with eSewa portal...');
+    setTimeout(() => {
+      setIsProcessing(false);
+      setEsewaOtpStep(true);
+      setEsewaOtp(['9', '4', '8', '2', '1', '6']); // pre-populate sample OTP for realistic UX
+    }, 800);
+  };
+
+  // Khalti Submit
+  const handleKhaltiLogin = (e) => {
+    e.preventDefault();
+    setFormError('');
+    if (khaltiMobile.length < 10) {
+      setFormError('Please enter a valid 10-digit Khalti mobile number.');
+      return;
+    }
+    if (khaltiMpin.length < 4) {
+      setFormError('Please enter your 4-digit Khalti MPIN.');
+      return;
+    }
+
+    setIsProcessing(true);
+    setProcessingStage('Connecting to Khalti digital gateway...');
+    setTimeout(() => {
+      setIsProcessing(false);
+      setKhaltiOtpStep(true);
+      setKhaltiOtp(['7', '3', '1', '9', '5', '0']);
+    }, 800);
+  };
+
+  // Finalize payment
+  const handleConfirmFinalPayment = () => {
+    setIsProcessing(true);
+    setProcessingStage(`Processing NPR ${totalPriceNpr.toLocaleString()} transaction...`);
 
     setTimeout(() => {
-      setProcessingStage('Authorizing payment with bank...');
-    }, 700);
-
-    setTimeout(() => {
-      setProcessingStage('Activating KhanaLens Pro membership...');
-    }, 1400);
+      setProcessingStage('Verifying token and activating KhanaLens Pro...');
+    }, 800);
 
     setTimeout(() => {
       setIsProcessing(false);
-      const generatedTxn = `KL-TXN-${Math.floor(100000 + Math.random() * 900000)}`;
+      const prefix = paymentMethod === 'esewa' ? 'ESEWA' : paymentMethod === 'khalti' ? 'KHALTI' : 'CARD';
+      const generatedTxn = `${prefix}-${Math.floor(1000000 + Math.random() * 9000000)}`;
       setTransactionId(generatedTxn);
       setPaymentSuccess(true);
       try {
         localStorage.setItem('kl_user_plan', selectedPlan.id);
         localStorage.setItem('kl_plan_billing', billingPeriod);
       } catch {}
-    }, 2100);
+    }, 1600);
   };
 
   return (
     <div className="kl-page payment-page-viewport kl-fade-up">
       <style>{`
+        .payment-page-viewport,
+        .payment-page-viewport * {
+          font-family: var(--kl-font) !important;
+        }
+
         .payment-page-viewport {
           height: 100%;
           display: flex;
@@ -177,7 +194,7 @@ export default function PaymentPage() {
         /* Hero */
         .payment-hero {
           text-align: center;
-          padding: 16px 8px 12px;
+          padding: 16px 8px 10px;
         }
 
         .payment-badge-pill {
@@ -192,7 +209,7 @@ export default function PaymentPage() {
           font-weight: 800;
           letter-spacing: 0.5px;
           box-shadow: 0 4px 12px rgba(37, 84, 215, 0.3);
-          margin-bottom: 10px;
+          margin-bottom: 8px;
         }
 
         .payment-hero h1 {
@@ -215,7 +232,7 @@ export default function PaymentPage() {
         .payment-plans-strip {
           display: flex;
           gap: 8px;
-          margin: 16px 0 14px;
+          margin: 14px 0 12px;
         }
 
         .payment-plan-chip {
@@ -269,7 +286,7 @@ export default function PaymentPage() {
           background: rgba(31, 77, 51, 0.08);
           border: 1px solid rgba(31, 77, 51, 0.1);
           width: fit-content;
-          margin: 0 auto 18px;
+          margin: 0 auto 16px;
         }
 
         .payment-toggle-btn {
@@ -351,7 +368,13 @@ export default function PaymentPage() {
         .payment-order-total strong {
           font-size: 22px;
           font-weight: 900;
-          color: #2554D7;
+          color: #1F4D33;
+        }
+
+        .payment-order-total small {
+          font-size: 12px;
+          color: rgba(31, 77, 51, 0.6);
+          margin-left: 6px;
         }
 
         /* Promo input */
@@ -391,143 +414,229 @@ export default function PaymentPage() {
         }
 
         /* Method Tabs */
-        .payment-method-selector {
-          display: flex;
+        .payment-gateway-tabs {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
           gap: 6px;
-          margin-bottom: 14px;
+          margin-bottom: 16px;
         }
 
-        .payment-method-tab {
-          flex: 1;
+        .payment-gateway-tab {
           display: flex;
+          flex-direction: column;
           align-items: center;
-          justify-content: center;
-          gap: 6px;
-          padding: 10px;
+          gap: 4px;
+          padding: 10px 4px;
           border-radius: 14px;
-          border: 1px solid rgba(31, 77, 51, 0.14);
-          background: rgba(255, 255, 255, 0.6);
-          color: #1F4D33;
-          font-size: 12px;
-          font-weight: 750;
+          border: 1.5px solid rgba(31, 77, 51, 0.14);
+          background: rgba(255, 255, 255, 0.7);
           cursor: pointer;
           transition: all 0.2s ease;
         }
 
-        .payment-method-tab.active {
-          background: #2554D7;
+        .payment-gateway-tab:hover {
+          transform: translateY(-1.5px);
+        }
+
+        /* eSewa Tab Active */
+        .payment-gateway-tab.active.esewa {
+          border-color: #41A124;
+          background: #F2FAF0;
+          box-shadow: 0 4px 14px rgba(65, 161, 36, 0.25);
+        }
+
+        /* Khalti Tab Active */
+        .payment-gateway-tab.active.khalti {
+          border-color: #5D2E8E;
+          background: #F7F3FB;
+          box-shadow: 0 4px 14px rgba(93, 46, 142, 0.25);
+        }
+
+        /* Card Tab Active */
+        .payment-gateway-tab.active.card {
           border-color: #2554D7;
-          color: #FFFFFF;
-          box-shadow: 0 4px 12px rgba(37, 84, 215, 0.25);
+          background: #F4F7FF;
+          box-shadow: 0 4px 14px rgba(37, 84, 215, 0.25);
         }
 
-        /* Form fields */
-        .payment-input-group {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          margin-bottom: 10px;
-        }
-
-        .payment-input-group label {
+        .payment-gateway-tab span {
           font-size: 11px;
-          font-weight: 750;
-          color: rgba(31, 77, 51, 0.75);
+          font-weight: 800;
         }
 
-        .payment-input {
-          height: 44px;
-          border-radius: 14px;
-          border: 1px solid rgba(31, 77, 51, 0.18);
-          background: #FDFEFE;
-          padding: 0 14px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #1F4D33;
-          outline: none;
-          box-sizing: border-box;
-          width: 100%;
+        /* Branded Gateway Panels */
+        .esewa-portal-box {
+          border-radius: 16px;
+          border: 1.5px solid #41A124;
+          background: #FAFDF9;
+          padding: 16px;
+          margin-bottom: 12px;
         }
 
-        .payment-input:focus {
-          border-color: #2554D7;
-          box-shadow: 0 0 0 3px rgba(37, 84, 215, 0.15);
-        }
-
-        .payment-row-2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-        }
-
-        .payment-checkbox-row {
+        .esewa-header-row {
           display: flex;
           align-items: center;
-          gap: 8px;
-          font-size: 11.5px;
-          color: rgba(31, 77, 51, 0.7);
-          margin: 12px 0 16px;
-          cursor: pointer;
+          justify-content: space-between;
+          padding-bottom: 10px;
+          margin-bottom: 12px;
+          border-bottom: 1px solid rgba(65, 161, 36, 0.2);
         }
 
-        .payment-checkbox-row input {
-          accent-color: #2554D7;
+        .esewa-brand-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #41A124;
+          font-size: 14px;
+          font-weight: 900;
+          letter-spacing: -0.3px;
         }
-
-        /* Submit Button */
-        .payment-submit-btn {
-          width: 100%;
-          height: 52px;
-          border-radius: var(--kl-radius-btn);
-          border: 0;
-          background: linear-gradient(135deg, #2554D7 0%, #1A3EB2 100%);
+        .esewa-brand-icon {
+          width: 22px;
+          height: 22px;
+          border-radius: 6px;
+          background: #41A124;
           color: #FFFFFF;
-          font-size: 15px;
+          display: grid;
+          place-items: center;
+          font-size: 13px;
+          font-weight: 900;
+        }
+
+        .esewa-btn {
+          width: 100%;
+          height: 48px;
+          border-radius: 14px;
+          border: 0;
+          background: #41A124;
+          color: #FFFFFF;
+          font-size: 14px;
           font-weight: 800;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          box-shadow: 0 10px 24px rgba(37, 84, 215, 0.35);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          box-shadow: 0 6px 18px rgba(65, 161, 36, 0.35);
+          transition: all 0.2s ease;
+          margin-top: 12px;
+        }
+        .esewa-btn:hover {
+          background: #388E20;
+          transform: translateY(-1.5px);
         }
 
-        .payment-submit-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 28px rgba(37, 84, 215, 0.45);
+        /* Khalti Portal */
+        .khalti-portal-box {
+          border-radius: 16px;
+          border: 1.5px solid #5D2E8E;
+          background: #FAF8FD;
+          padding: 16px;
+          margin-bottom: 12px;
         }
 
-        .payment-submit-btn:disabled {
-          opacity: 0.65;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        /* Digital Wallet list */
-        .payment-wallet-list {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .payment-wallet-option {
+        .khalti-header-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 14px;
-          border-radius: 14px;
-          background: #FFFFFF;
-          border: 1px solid rgba(31, 77, 51, 0.12);
-          cursor: pointer;
-          font-size: 13px;
-          font-weight: 750;
-          color: #1F4D33;
-          transition: all 0.15s ease;
+          padding-bottom: 10px;
+          margin-bottom: 12px;
+          border-bottom: 1px solid rgba(93, 46, 142, 0.2);
         }
-        .payment-wallet-option:hover {
+
+        .khalti-brand-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #5D2E8E;
+          font-size: 14px;
+          font-weight: 900;
+          letter-spacing: -0.3px;
+        }
+        .khalti-brand-icon {
+          width: 22px;
+          height: 22px;
+          border-radius: 6px;
+          background: #5D2E8E;
+          color: #FFFFFF;
+          display: grid;
+          place-items: center;
+          font-size: 13px;
+          font-weight: 900;
+        }
+
+        .khalti-btn {
+          width: 100%;
+          height: 48px;
+          border-radius: 14px;
+          border: 0;
+          background: #5D2E8E;
+          color: #FFFFFF;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          box-shadow: 0 6px 18px rgba(93, 46, 142, 0.35);
+          transition: all 0.2s ease;
+          margin-top: 12px;
+        }
+        .khalti-btn:hover {
+          background: #4C2475;
+          transform: translateY(-1.5px);
+        }
+
+        /* Form fields */
+        .gateway-input-label {
+          display: block;
+          font-size: 11px;
+          font-weight: 800;
+          color: #1F4D33;
+          margin-bottom: 4px;
+        }
+
+        .gateway-input {
+          width: 100%;
+          height: 42px;
+          border-radius: 12px;
+          border: 1px solid rgba(31, 77, 51, 0.2);
+          background: #FFFFFF;
+          padding: 0 12px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #1F4D33;
+          outline: none;
+          box-sizing: border-box;
+          margin-bottom: 10px;
+        }
+        .gateway-input:focus {
           border-color: #2554D7;
-          background: #F6F8FF;
+          box-shadow: 0 0 0 3px rgba(37, 84, 215, 0.12);
+        }
+
+        /* OTP Boxes */
+        .otp-inputs-row {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin: 14px 0 16px;
+        }
+        .otp-box {
+          width: 40px;
+          height: 44px;
+          border-radius: 10px;
+          border: 1.5px solid rgba(31, 77, 51, 0.25);
+          background: #FFFFFF;
+          font-size: 18px;
+          font-weight: 800;
+          text-align: center;
+          color: #1F4D33;
+          outline: none;
+        }
+        .otp-box:focus {
+          border-color: #2554D7;
         }
 
         /* Security Badges */
@@ -548,7 +657,7 @@ export default function PaymentPage() {
           gap: 4px;
         }
 
-        /* Processing Modal */
+        /* Modal Overlay */
         .payment-modal-backdrop {
           position: fixed;
           inset: 0;
@@ -564,7 +673,7 @@ export default function PaymentPage() {
 
         .payment-modal-card {
           width: min(100%, 360px);
-          padding: 28px 22px;
+          padding: 26px 20px;
           border-radius: 26px;
           background: #FFFFFF;
           border: 1px solid rgba(31, 77, 51, 0.15);
@@ -579,13 +688,13 @@ export default function PaymentPage() {
         }
 
         .payment-spinner {
-          width: 48px;
-          height: 48px;
+          width: 46px;
+          height: 46px;
           border: 4px solid #E6EEFA;
-          border-top-color: #2554D7;
+          border-top-color: #41A124;
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
-          margin: 0 auto 16px;
+          margin: 0 auto 14px;
         }
 
         @keyframes spin {
@@ -596,25 +705,25 @@ export default function PaymentPage() {
           width: 60px;
           height: 60px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #3FA47A 0%, #1F4D33 100%);
+          background: linear-gradient(135deg, #41A124 0%, #297712 100%);
           color: #FFFFFF;
           display: grid;
           place-items: center;
           margin: 0 auto 14px;
-          box-shadow: 0 10px 24px rgba(63, 164, 122, 0.35);
+          box-shadow: 0 10px 24px rgba(65, 161, 36, 0.35);
         }
 
         .payment-error-alert {
-          padding: 9px 12px;
+          padding: 8px 12px;
           border-radius: 12px;
           background: #FEECEB;
           color: #D32F2F;
-          font-size: 11.5px;
+          font-size: 11px;
           font-weight: 700;
           display: flex;
           align-items: center;
           gap: 6px;
-          margin-bottom: 12px;
+          margin-bottom: 10px;
         }
       `}</style>
 
@@ -622,7 +731,6 @@ export default function PaymentPage() {
         <AppHeader
           avatar={avatar}
           showBack={true}
-          showUpgrade={false}
           backTo="/upgrade"
         />
 
@@ -630,11 +738,11 @@ export default function PaymentPage() {
         <div className="payment-hero">
           <div className="payment-badge-pill">
             <span style={{ fontSize: 13 }}>✦</span>
-            KHANALENS PREMIUM
+            UPGRADE TO PREMIUM
           </div>
-          <h1>Upgrade Your Plan</h1>
+          <h1>Select Plan & Payment</h1>
           <p>
-            Choose your plan and payment method to unlock unlimited AI scanner accuracy and macro tracking.
+            Upgrade KhanaLens with Nepal's trusted digital wallets or international cards.
           </p>
         </div>
 
@@ -642,8 +750,9 @@ export default function PaymentPage() {
         <div className="payment-plans-strip">
           {PLANS.filter((p) => p.id !== 'free').map((plan) => {
             const isSelected = selectedPlanId === plan.id;
-            const price = billingPeriod === 'yearly' ? plan.yearly : plan.monthly;
-            const periodText = billingPeriod === 'yearly' ? '/yr' : '/mo';
+            const priceNpr = plan.id === 'plus' ? (billingPeriod === 'yearly' ? 12000 : 1200)
+              : plan.id === 'pro' ? (billingPeriod === 'yearly' ? 25000 : 2500)
+              : (billingPeriod === 'yearly' ? 65000 : 6500);
 
             return (
               <div
@@ -652,7 +761,7 @@ export default function PaymentPage() {
                 onClick={() => setSelectedPlanId(plan.id)}
               >
                 <strong>{plan.name}</strong>
-                <span>${price}{periodText}</span>
+                <span>Rs. {priceNpr.toLocaleString()}</span>
               </div>
             );
           })}
@@ -677,33 +786,36 @@ export default function PaymentPage() {
           </button>
         </div>
 
-        {/* Main Card: Order Summary & Payment Form */}
+        {/* Main Card: Order Summary */}
         <div className="payment-main-card">
           <h2 className="payment-section-heading">
-            <Zap size={16} color="#2554D7" />
+            <Zap size={16} color="#FF9A1F" />
             Order Summary
           </h2>
 
           <div className="payment-order-row">
-            <span>KhanaLens {selectedPlan.name} Plan</span>
-            <strong>${basePrice} {billingPeriod === 'yearly' ? '/ year' : '/ month'}</strong>
+            <span>KhanaLens {selectedPlan.name} Plan ({billingPeriod})</span>
+            <strong>Rs. {basePriceNpr.toLocaleString()}</strong>
           </div>
 
           {promoApplied && (
             <div className="payment-order-row" style={{ color: '#2E7D32' }}>
-              <span>Promo Discount (20%)</span>
-              <strong>-${discountAmount}</strong>
+              <span>Promo Code Discount (20%)</span>
+              <strong>-Rs. {discountAmountNpr.toLocaleString()}</strong>
             </div>
           )}
 
           <div className="payment-order-row">
-            <span>Taxes & Processing</span>
-            <strong>$0.00</strong>
+            <span>Taxes & Service Fee</span>
+            <strong>Rs. 0.00</strong>
           </div>
 
           <div className="payment-order-total">
-            <span>Total Due Today</span>
-            <strong>${totalPrice}.00</strong>
+            <span>Total Payable</span>
+            <div>
+              <strong>Rs. {totalPriceNpr.toLocaleString()}</strong>
+              <small>(NPR local pricing)</small>
+            </div>
           </div>
 
           {/* Promo Code Form */}
@@ -731,153 +843,271 @@ export default function PaymentPage() {
           )}
         </div>
 
-        {/* Payment Details Card */}
+        {/* Payment Gateways Card */}
         <div className="payment-main-card">
           <h2 className="payment-section-heading">
-            <CreditCard size={16} color="#2554D7" />
-            Payment Method
+            <Wallet size={16} color="#1F4D33" />
+            Select Payment Gateway
           </h2>
 
-          {/* Selector Tabs */}
-          <div className="payment-method-selector">
-            <button
-              type="button"
-              className={`payment-method-tab ${paymentMethod === 'card' ? 'active' : ''}`}
-              onClick={() => setPaymentMethod('card')}
+          {/* Method Tabs */}
+          <div className="payment-gateway-tabs">
+            <div
+              className={`payment-gateway-tab ${paymentMethod === 'esewa' ? 'active esewa' : ''}`}
+              onClick={() => { setPaymentMethod('esewa'); setEsewaOtpStep(false); setFormError(''); }}
             >
-              <CreditCard size={15} />
-              Credit / Debit Card
-            </button>
-            <button
-              type="button"
-              className={`payment-method-tab ${paymentMethod === 'wallet' ? 'active' : ''}`}
-              onClick={() => setPaymentMethod('wallet')}
+              <EsewaLogo height={22} />
+            </div>
+
+            <div
+              className={`payment-gateway-tab ${paymentMethod === 'khalti' ? 'active khalti' : ''}`}
+              onClick={() => { setPaymentMethod('khalti'); setKhaltiOtpStep(false); setFormError(''); }}
             >
-              <Wallet size={15} />
-              Digital Wallet
-            </button>
+              <KhaltiLogo height={22} />
+            </div>
+
+            <div
+              className={`payment-gateway-tab ${paymentMethod === 'card' ? 'active card' : ''}`}
+              onClick={() => { setPaymentMethod('card'); setFormError(''); }}
+            >
+              <SctLogo height={22} />
+            </div>
           </div>
 
           {formError && (
             <div className="payment-error-alert">
-              <AlertCircle size={15} />
+              <AlertCircle size={14} />
               <span>{formError}</span>
             </div>
           )}
 
-          {paymentMethod === 'card' ? (
-            <form onSubmit={handleSubmitPayment}>
-              <div className="payment-input-group">
-                <label>Cardholder Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Alex Morgan"
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                  className="payment-input"
-                  required
-                />
+          {/* ESEWA PORTAL UI */}
+          {paymentMethod === 'esewa' && (
+            <div className="esewa-portal-box">
+              <div className="esewa-header-row">
+                <div className="esewa-brand-badge">
+                  <span className="esewa-brand-icon">e</span>
+                  <span>eSewa Payment</span>
+                </div>
+                <strong style={{ fontSize: 13, color: '#41A124' }}>
+                  Rs. {totalPriceNpr.toLocaleString()}
+                </strong>
               </div>
 
-              <div className="payment-input-group">
-                <label>Card Number</label>
-                <input
-                  type="text"
-                  placeholder="4532 •••• •••• 8892"
-                  value={cardNumber}
-                  onChange={handleCardNumberChange}
-                  className="payment-input"
-                  required
-                />
+              {!esewaOtpStep ? (
+                <form onSubmit={handleEsewaLogin}>
+                  <label className="gateway-input-label">eSewa ID (Mobile / Email)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 9841234567"
+                    value={esewaId}
+                    onChange={(e) => setEsewaId(e.target.value)}
+                    className="gateway-input"
+                    required
+                  />
+
+                  <label className="gateway-input-label">eSewa MPIN / Password</label>
+                  <input
+                    type="password"
+                    placeholder="••••"
+                    maxLength={6}
+                    value={esewaMpin}
+                    onChange={(e) => setEsewaMpin(e.target.value)}
+                    className="gateway-input"
+                    required
+                  />
+
+                  <button type="submit" className="esewa-btn">
+                    <span>Login & Pay with eSewa</span>
+                    <ArrowRight size={15} />
+                  </button>
+                </form>
+              ) : (
+                <div>
+                  <p style={{ margin: '0 0 10px', fontSize: 12, color: 'rgba(31,77,51,0.75)', textAlign: 'center' }}>
+                    Enter the 6-digit OTP sent to <strong>{esewaId || '9841******'}</strong>:
+                  </p>
+                  <div className="otp-inputs-row">
+                    {esewaOtp.map((digit, idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        readOnly
+                        className="otp-box"
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="esewa-btn"
+                    onClick={handleConfirmFinalPayment}
+                  >
+                    <Check size={16} />
+                    <span>Confirm & Pay Rs. {totalPriceNpr.toLocaleString()}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEsewaOtpStep(false)}
+                    style={{
+                      background: 'none', border: 0, color: '#68897E', fontSize: 11,
+                      cursor: 'pointer', display: 'block', margin: '8px auto 0'
+                    }}
+                  >
+                    Back to eSewa login
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* KHALTI PORTAL UI */}
+          {paymentMethod === 'khalti' && (
+            <div className="khalti-portal-box">
+              <div className="khalti-header-row">
+                <div className="khalti-brand-badge">
+                  <span className="khalti-brand-icon">K</span>
+                  <span>Khalti Digital Wallet</span>
+                </div>
+                <strong style={{ fontSize: 13, color: '#5D2E8E' }}>
+                  Rs. {totalPriceNpr.toLocaleString()}
+                </strong>
               </div>
 
-              <div className="payment-row-2">
-                <div className="payment-input-group">
-                  <label>Expiry (MM/YY)</label>
+              {!khaltiOtpStep ? (
+                <form onSubmit={handleKhaltiLogin}>
+                  <label className="gateway-input-label">Khalti Mobile Number</label>
+                  <input
+                    type="tel"
+                    placeholder="98XXXXXXXX"
+                    maxLength={10}
+                    value={khaltiMobile}
+                    onChange={(e) => setKhaltiMobile(e.target.value.replace(/\D/g, ''))}
+                    className="gateway-input"
+                    required
+                  />
+
+                  <label className="gateway-input-label">Khalti MPIN (4-Digits)</label>
+                  <input
+                    type="password"
+                    placeholder="••••"
+                    maxLength={4}
+                    value={khaltiMpin}
+                    onChange={(e) => setKhaltiMpin(e.target.value.replace(/\D/g, ''))}
+                    className="gateway-input"
+                    required
+                  />
+
+                  <button type="submit" className="khalti-btn">
+                    <span>Pay with Khalti</span>
+                    <ArrowRight size={15} />
+                  </button>
+                </form>
+              ) : (
+                <div>
+                  <p style={{ margin: '0 0 10px', fontSize: 12, color: 'rgba(31,77,51,0.75)', textAlign: 'center' }}>
+                    Enter verification code sent to <strong>{khaltiMobile}</strong>:
+                  </p>
+                  <div className="otp-inputs-row">
+                    {khaltiOtp.map((digit, idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        readOnly
+                        className="otp-box"
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="khalti-btn"
+                    onClick={handleConfirmFinalPayment}
+                  >
+                    <Check size={16} />
+                    <span>Authorize Rs. {totalPriceNpr.toLocaleString()}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setKhaltiOtpStep(false)}
+                    style={{
+                      background: 'none', border: 0, color: '#68897E', fontSize: 11,
+                      cursor: 'pointer', display: 'block', margin: '8px auto 0'
+                    }}
+                  >
+                    Back to Khalti login
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* CARD PAYMENT UI */}
+          {paymentMethod === 'card' && (
+            <div>
+              <label className="gateway-input-label">Name on Card</label>
+              <input
+                type="text"
+                placeholder="Cardholder Name"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+                className="gateway-input"
+                required
+              />
+
+              <label className="gateway-input-label">Card Number (SCT / Visa / Mastercard)</label>
+              <input
+                type="text"
+                placeholder="4532 •••• •••• 8892"
+                value={cardNumber}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+                  setCardNumber(raw.match(/.{1,4}/g)?.join(' ') || raw);
+                }}
+                className="gateway-input"
+                required
+              />
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div>
+                  <label className="gateway-input-label">Expiry (MM/YY)</label>
                   <input
                     type="text"
                     placeholder="12/28"
                     value={cardExpiry}
-                    onChange={handleExpiryChange}
-                    className="payment-input"
+                    onChange={(e) => {
+                      let raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+                      if (raw.length >= 3) raw = `${raw.slice(0, 2)}/${raw.slice(2)}`;
+                      setCardExpiry(raw);
+                    }}
+                    className="gateway-input"
                     required
                   />
                 </div>
-                <div className="payment-input-group">
-                  <label>Security CVC</label>
+                <div>
+                  <label className="gateway-input-label">CVC</label>
                   <input
                     type="password"
                     placeholder="123"
+                    maxLength={4}
                     value={cardCvc}
-                    onChange={handleCvcChange}
-                    className="payment-input"
+                    onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ''))}
+                    className="gateway-input"
                     required
                   />
                 </div>
               </div>
 
-              <div className="payment-input-group">
-                <label>Postal / ZIP Code</label>
-                <input
-                  type="text"
-                  placeholder="10001"
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                  className="payment-input"
-                />
-              </div>
-
-              <label className="payment-checkbox-row">
-                <input
-                  type="checkbox"
-                  checked={saveCard}
-                  onChange={(e) => setSaveCard(e.target.checked)}
-                />
-                <span>Save card for secure automatic renewal (cancel anytime)</span>
-              </label>
-
               <button
-                type="submit"
-                className="payment-submit-btn"
-                disabled={isProcessing}
+                type="button"
+                className="kl-btn-primary"
+                onClick={handleConfirmFinalPayment}
+                style={{ height: 48, marginTop: 8 }}
               >
                 <Lock size={15} />
-                Pay ${totalPrice}.00 & Activate {selectedPlan.name}
-              </button>
-            </form>
-          ) : (
-            <div className="payment-wallet-list">
-              <button
-                type="button"
-                className="payment-wallet-option"
-                onClick={handleSubmitPayment}
-              >
-                <span> Pay (Apple Pay)</span>
-                <ArrowRight size={14} />
-              </button>
-              <button
-                type="button"
-                className="payment-wallet-option"
-                onClick={handleSubmitPayment}
-              >
-                <span>Google Pay</span>
-                <ArrowRight size={14} />
-              </button>
-              <button
-                type="button"
-                className="payment-wallet-option"
-                onClick={handleSubmitPayment}
-              >
-                <span>PayPal Express</span>
-                <ArrowRight size={14} />
-              </button>
-              <button
-                type="button"
-                className="payment-wallet-option"
-                onClick={handleSubmitPayment}
-              >
-                <span>eSewa / Khalti Digital Wallet</span>
-                <ArrowRight size={14} />
+                <span>Pay Rs. {totalPriceNpr.toLocaleString()}</span>
               </button>
             </div>
           )}
@@ -885,12 +1115,12 @@ export default function PaymentPage() {
           {/* Guarantees */}
           <div className="payment-guarantees">
             <div className="payment-guarantee-item">
-              <ShieldCheck size={14} color="#3FA47A" />
-              <span>256-Bit SSL Encryption</span>
+              <ShieldCheck size={14} color="#41A124" />
+              <span>Verified Nepal Gateway</span>
             </div>
             <div className="payment-guarantee-item">
-              <RotateCcw size={14} color="#3FA47A" />
-              <span>30-Day Guarantee</span>
+              <RotateCcw size={14} color="#41A124" />
+              <span>Instant Activation</span>
             </div>
           </div>
         </div>
@@ -900,9 +1130,11 @@ export default function PaymentPage() {
       {isProcessing && (
         <div className="payment-modal-backdrop">
           <div className="payment-modal-card">
-            <div className="payment-spinner" />
+            <div className="payment-spinner" style={{
+              borderTopColor: paymentMethod === 'esewa' ? '#41A124' : paymentMethod === 'khalti' ? '#5D2E8E' : '#2554D7'
+            }} />
             <h3 style={{ margin: '0 0 6px', fontSize: 18, color: '#1F4D33' }}>
-              Processing Payment
+              Authorizing Payment
             </h3>
             <p style={{ margin: 0, fontSize: 12, color: 'rgba(31,77,51,0.7)' }}>
               {processingStage}
@@ -919,10 +1151,10 @@ export default function PaymentPage() {
               <Check size={32} strokeWidth={3} />
             </div>
             <h3 style={{ margin: '0 0 4px', fontSize: 20, color: '#1F4D33', fontWeight: 800 }}>
-              Payment Successful!
+              Payment Successful! 🎉
             </h3>
             <p style={{ margin: '0 0 16px', fontSize: 13, color: 'rgba(31,77,51,0.75)' }}>
-              Welcome to <strong>KhanaLens {selectedPlan.name}</strong>! All features have been unlocked.
+              Congratulations! Your <strong>KhanaLens {selectedPlan.name}</strong> membership is now active.
             </p>
 
             <div style={{
@@ -935,25 +1167,30 @@ export default function PaymentPage() {
               marginBottom: 18,
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ color: 'rgba(31,77,51,0.65)' }}>Transaction:</span>
+                <span style={{ color: 'rgba(31,77,51,0.65)' }}>Gateway:</span>
+                <strong>{paymentMethod === 'esewa' ? 'eSewa Digital Wallet' : paymentMethod === 'khalti' ? 'Khalti Wallet' : 'Debit/Credit Card'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ color: 'rgba(31,77,51,0.65)' }}>Transaction ID:</span>
                 <strong>{transactionId}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                 <span style={{ color: 'rgba(31,77,51,0.65)' }}>Amount Paid:</span>
-                <strong>${totalPrice}.00</strong>
+                <strong style={{ color: '#41A124' }}>Rs. {totalPriceNpr.toLocaleString()}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'rgba(31,77,51,0.65)' }}>Plan Duration:</span>
-                <strong>{billingPeriod === 'yearly' ? '1 Year' : '1 Month'}</strong>
+                <strong>{billingPeriod === 'yearly' ? '1 Year Access' : '1 Month Access'}</strong>
               </div>
             </div>
 
             <button
               type="button"
-              className="payment-submit-btn"
+              className="kl-btn-primary"
               onClick={() => navigate('/home')}
+              style={{ height: 48 }}
             >
-              Start Using {selectedPlan.name} Features
+              Start Exploring {selectedPlan.name}
             </button>
           </div>
         </div>

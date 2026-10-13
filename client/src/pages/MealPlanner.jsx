@@ -286,7 +286,7 @@ export default function MealPlanner() {
           >
             <ArrowLeft size={20} />
           </button>
-          <BrandLogo size={36} tagline={false} />
+          <BrandLogo size={44} tagline={false} />
           <div className="planner-header-actions">
             {plan && (
               <>

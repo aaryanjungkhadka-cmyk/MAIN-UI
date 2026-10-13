@@ -396,7 +396,7 @@ export default function History() {
               <ChevronLeft size={20} strokeWidth={2.2} />
             </button>
 
-            <BrandLogo size={36} tagline={false} />
+            <BrandLogo size={44} tagline={false} />
 
             <button
               type="button"
@@ -683,7 +683,7 @@ export default function History() {
           width: 100%;
           max-width: 100%;
           box-sizing: border-box;
-          padding: 16px 14px 28px;
+          padding: 16px 14px 96px;
           margin: 0;
         }
 

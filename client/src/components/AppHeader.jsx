@@ -13,7 +13,7 @@ export default function AppHeader({
   foodTo = '/meal-plan',
   profileTo = '/profile',
   actions,
-  logoSize = 40,
+  logoSize = 44,
 }) {
   const [internalStreak, setInternalStreak] = useState(0);
 

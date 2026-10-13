@@ -18,6 +18,7 @@ import {
   Target,
   UserRound,
   UsersRound,
+  Sparkles,
   X,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
@@ -54,6 +55,13 @@ const groups = [
   {
     title: "YOUR PLAN",
     items: [
+      {
+        id: "upgrade",
+        icon: Sparkles,
+        label: "Upgrade",
+        description: "",
+        isUpgrade: true,
+      },
       {
         id: "personal",
         icon: UserRound,
@@ -233,6 +241,10 @@ export default function ProfileSettings() {
 
   const open = (id) => {
     if (id === "language") return;
+    if (id === "upgrade") {
+      navigate("/upgrade");
+      return;
+    }
     setDraft(profile);
     setPanel(id);
   };
@@ -292,25 +304,33 @@ export default function ProfileSettings() {
     <div className="kl-page profile-viewport kl-fade-up">
       <style>{`
         .profile-viewport {
-          min-height: 100%;
+          width: 100%;
           height: 100%;
+          min-height: 0;
+          max-height: 100%;
           background: transparent;
           color: #173b32;
           display: flex;
           flex-direction: column;
           font-family: var(--kl-font);
           overflow: hidden;
+          box-sizing: border-box;
         }
         .profile-shell {
           width: 100%;
-          flex: 1 1 auto;
+          flex: 1 1 0%;
           min-height: 0;
           position: relative;
-          padding: 20px 16px 24px;
+          padding: 20px 16px 96px;
           overflow-y: auto;
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
           box-sizing: border-box;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .profile-shell::-webkit-scrollbar {
+          display: none;
         }
         .profile-shell:before,
         .profile-shell:after {
@@ -1024,9 +1044,13 @@ export default function ProfileSettings() {
                 <strong>{profile.activity || "Moderate"}</strong>
                 <span>ACTIVITY</span>
               </div>
-              <div className="profile-stat">
+              <div
+                className="profile-stat"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/streak")}
+              >
                 <strong>{streak}</strong>
-                <span>DAY STREAK</span>
+                <span>KHANA SCORE</span>
               </div>
             </div>
           </section>
@@ -1044,6 +1068,57 @@ export default function ProfileSettings() {
                       : entry.id === "units"
                       ? profile.units
                       : entry.description;
+                  if (entry.id === "upgrade") {
+                    return (
+                      <div
+                        className="profile-menu-row profile-menu-upgrade-row"
+                        key={entry.id}
+                        role="button"
+                        tabIndex={0}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-start",
+                          padding: "10px 14px",
+                          minHeight: "48px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => open("upgrade")}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") open("upgrade");
+                        }}
+                      >
+                        {localStorage.getItem("kl_user_plan") ? (
+                          <span
+                            style={{
+                              padding: "5px 12px",
+                              borderRadius: "999px",
+                              background: "#E8F5EF",
+                              color: "#1F4D33",
+                              fontSize: "11px",
+                              fontWeight: 800,
+                            }}
+                          >
+                            PRO ✓
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="kl-upgrade-pill-btn"
+                            aria-label="Upgrade to Pro"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              navigate("/upgrade");
+                            }}
+                          >
+                            <span className="sparkle-icon">✦</span>
+                            <span>Upgrade</span>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  }
+
                   return (
                     <div
                       className="profile-menu-row"
@@ -1060,7 +1135,7 @@ export default function ProfileSettings() {
                       </span>
                       <span className="profile-menu-copy">
                         <strong>{entry.label}</strong>
-                        <span>{description}</span>
+                        {description ? <span>{description}</span> : null}
                       </span>
                       {isLanguage ? (
                         <span className="profile-language-picker" aria-label="Select language" onClick={(event) => event.stopPropagation()}>

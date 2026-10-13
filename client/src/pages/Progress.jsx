@@ -157,7 +157,7 @@ function Progress() {
           overflow-y: auto;
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
-          padding: 14px 14px 28px;
+          padding: 14px 14px 96px;
           box-sizing: border-box;
           width: 100%;
         }
@@ -305,7 +305,7 @@ function Progress() {
               >
                 <ChevronLeft size={20} color="#1F4D33" />
               </button>
-              <BrandLogo size={36} tagline={false} />
+              <BrandLogo size={44} tagline={false} />
               <button
                 onClick={() => {
                   setCalendarOpen((open) => !open);

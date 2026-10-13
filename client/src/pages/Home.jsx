@@ -437,7 +437,7 @@ const homeFixCss = `
   border-radius: 0 !important;
   box-shadow: none !important;
   background: transparent !important;
-  padding: 16px 16px 24px !important;
+  padding: 16px 16px 96px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;

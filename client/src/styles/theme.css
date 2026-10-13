@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
   --kl-green: #1F4D33;
   --kl-green-deep: #163D29;
@@ -13,7 +15,11 @@
   --kl-radius-card: 34px;
   --kl-radius-card-sm: 22px;
   --kl-radius-btn: 18px;
-  --kl-font: 'Google Sans Local', 'Google Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --kl-font: 'Plus Jakarta Sans', 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html, body, #root, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, a, label {
+  font-family: var(--kl-font);
 }
 
 html, body, #root {
@@ -23,7 +29,6 @@ html, body, #root {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  font-family: var(--kl-font);
   color: var(--kl-text);
   -webkit-font-smoothing: antialiased;
 }
@@ -83,6 +88,17 @@ html, body, #root {
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+
+/* Hide desktop browser scrollbar across mobile mockup frame */
+.kl-app-frame *,
+.kl-app-frame {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.kl-app-frame *::-webkit-scrollbar,
+.kl-app-frame::-webkit-scrollbar {
+  display: none;
 }
 
 .kl-scroll-content {
@@ -175,12 +191,12 @@ html, body, #root {
 
 /* Animations */
 @keyframes kl-fade-up {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .kl-fade-up {
-  animation: kl-fade-up 0.4s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  animation: kl-fade-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -196,27 +212,25 @@ html, body, #root {
 /* STEP 2: Brand Logo styles */
 .kl-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .kl-brand-badge {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   border-radius: 50%;
-  background: linear-gradient(145deg, #FBF7EE, #E9DCC3);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 0 0 1px rgba(31, 77, 51, 0.15),
-    0 8px 18px rgba(31, 77, 51, 0.18);
+  background: transparent;
+  box-shadow: none;
   overflow: visible;
+  filter: drop-shadow(0 3px 8px rgba(31, 77, 51, 0.16));
 }
 .kl-brand-mark {
   display: block;
-  width: 86%;
-  height: 86%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  border-radius: 50%;
   border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: none;
-  overflow: visible;
+  outline: none;
+  background: transparent;
 }
 .kl-brand-text strong {
   display: block;
@@ -278,6 +292,7 @@ html, body, #root {
 .kl-upgrade-pill-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 7px 14px;
   border-radius: 999px;
@@ -294,6 +309,13 @@ html, body, #root {
   flex-shrink: 0;
   line-height: 1;
 }
+.kl-upgrade-pill-btn.kl-upgrade-icon-only {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 14px;
+}
 .kl-upgrade-pill-btn:hover {
   transform: translateY(-1.5px);
   filter: brightness(1.08);
@@ -303,42 +325,161 @@ html, body, #root {
   transform: translateY(0);
 }
 .kl-upgrade-pill-btn .sparkle-icon {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.kl-header-btn-upgrade {
+  background: linear-gradient(135deg, #2554D7 0%, #1D42B0 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(37, 84, 215, 0.35) !important;
+}
+.kl-header-btn-upgrade:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 84, 215, 0.48) !important;
+}
+.kl-header-btn-upgrade .sparkle-icon {
+  font-size: 15px;
+  line-height: 1;
+}
 
-/* STEP 4: Beige bottom navigation */
-.kl-bottom-nav {
-  position: relative;
-  flex-shrink: 0;
+/* STEP 4: Floating Figma-style Navigation Bar with expanding active pill */
+.kl-bottom-nav-wrap {
+  position: absolute;
+  bottom: 0;
   left: 0;
   right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.kl-bottom-nav {
+  position: relative;
   margin: 0 auto;
   width: 100%;
+  height: 58px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(170deg, #FBF8F0 0%, #F7F1E4 60%, #F2EADA 100%);
-  border-top: 1px solid rgba(31, 77, 51, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 -8px 24px rgba(74, 58, 24, 0.08);
-  z-index: 50;
+  justify-content: space-between;
+  padding: 5px 6px;
+  /* Translucent liquid beige glass gradient */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 253, 248, 0.82) 0%,
+    rgba(247, 240, 227, 0.72) 48%,
+    rgba(241, 232, 216, 0.76) 100%
+  );
+  backdrop-filter: blur(26px) saturate(190%) contrast(102%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%) contrast(102%);
+  border-radius: 999px;
+  /* Liquid glass specular highlights & realistic soft drop shadow */
+  box-shadow:
+    0 16px 36px -4px rgba(60, 48, 30, 0.16),
+    0 4px 14px -2px rgba(60, 48, 30, 0.08),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 2px rgba(212, 196, 172, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.82);
   box-sizing: border-box;
+  overflow: hidden;
 }
+
+/* Subtle top liquid gloss reflection */
+.kl-bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.06) 60%,
+    transparent 100%
+  );
+  border-radius: 999px 999px 0 0;
+  pointer-events: none;
+}
+
 .kl-nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  color: rgba(31, 77, 51, 0.6); font-size: 11px; font-weight: 600; text-decoration: none;
-  background: none; border: none; cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 999px;
+  color: rgba(31, 77, 51, 0.65);
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 1;
 }
-.kl-nav-item.active { color: var(--kl-green); }
-.kl-nav-scan {
-  width: 58px; height: 58px; margin-top: -26px; border-radius: 50%;
-  display: grid; place-items: center; color: #FBF7EE;
-  background: linear-gradient(135deg, #2f7a53 0%, #1f4d33 100%);
-  box-shadow: 0 10px 22px rgba(31, 77, 51, 0.3), 0 0 0 5px #F7F1E4;
+
+/* Inactive items: icon-only circular hit targets */
+.kl-nav-item:not(.active) {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  color: rgba(31, 77, 51, 0.65);
+}
+
+.kl-nav-item:not(.active):hover {
+  color: #1F4D33;
+  background: rgba(31, 77, 51, 0.08);
+}
+
+.kl-nav-item:not(.active):active {
+  transform: scale(0.92);
+}
+
+/* Active item: expands into crisp forest green capsule with white icon + label */
+.kl-nav-item.active {
+  background: linear-gradient(135deg, #1F4D33 0%, #153A26 100%);
+  color: #FBF7EE;
+  padding: 8px 16px;
+  gap: 7px;
+  box-shadow:
+    0 6px 18px rgba(21, 58, 38, 0.28),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+}
+
+.kl-nav-item.active .kl-nav-icon-wrap {
+  color: #FBF7EE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kl-nav-label {
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+  line-height: 1;
+  color: #FBF7EE;
+  white-space: nowrap;
+  animation: kl-nav-label-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes kl-nav-label-pop {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* STEP 6: Avatar Picker styles */
