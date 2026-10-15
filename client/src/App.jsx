@@ -19,6 +19,7 @@ import MealPlanner from './pages/MealPlanner';
 import StreakPage from './pages/StreakPage';
 import UpgradePage from './pages/UpgradePage';
 import PaymentPage from './pages/PaymentPage';
+import NotificationPage from './pages/NotificationPage';
 import { useAuth } from './hooks/useAuth';
 
 function ProtectedRoute() {
@@ -78,6 +79,7 @@ function AppRoutes() {
             <Route path="/profile/setup" element={<ProfileSetup />} />
             <Route path="/meal-plan" element={<MealPlanner />} />
             <Route path="/streak" element={<StreakPage />} />
+            <Route path="/notifications" element={<NotificationPage />} />
             <Route path="/upgrade" element={<UpgradePage />} />
             <Route path="/payment" element={<PaymentPage />} />
           </Route>

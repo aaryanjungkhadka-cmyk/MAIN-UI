@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Flame, UtensilsCrossed } from 'lucide-react';
+import { Bell, ChevronLeft, Flame, UtensilsCrossed } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 import { Avatar } from './Avatar';
 import { getStreakData } from '../data/streak';
@@ -55,6 +55,10 @@ export default function AppHeader({
             {resolvedStreak > 0 && (
               <span className="kl-header-streak-badge">{resolvedStreak}</span>
             )}
+          </Link>
+          <Link to="/notifications" className="kl-header-btn kl-header-btn-notif" aria-label="Notifications">
+            <Bell size={20} />
+            <span className="kl-header-notif-dot" />
           </Link>
           <Link to={foodTo} className="kl-header-btn" aria-label="Meal planner">
             <UtensilsCrossed size={20} />

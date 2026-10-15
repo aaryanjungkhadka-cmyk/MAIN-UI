@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
+  Bell,
   Check,
   ChevronRight,
   CircleUserRound,
@@ -85,6 +86,12 @@ const groups = [
   {
     title: "PREFERENCES",
     items: [
+      {
+        id: "notifications",
+        icon: Bell,
+        label: "Notifications",
+        description: "Diet alerts & meal reminders",
+      },
       {
         id: "units",
         icon: Globe2,
@@ -243,6 +250,10 @@ export default function ProfileSettings() {
     if (id === "language") return;
     if (id === "upgrade") {
       navigate("/upgrade");
+      return;
+    }
+    if (id === "notifications") {
+      navigate("/notifications");
       return;
     }
     setDraft(profile);
