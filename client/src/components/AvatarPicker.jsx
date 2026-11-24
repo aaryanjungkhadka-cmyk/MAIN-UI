@@ -4,18 +4,18 @@ import { FOOD_AVATARS, FoodAvatar } from './FoodAvatar';
 import { PEOPLE_AVATARS } from './Avatar';
 
 export default function AvatarPicker({ value, onChange, onUpload }) {
-  const [tab, setTab] = useState(String(value).startsWith('person-') ? 'people' : 'food');
+  const [tab, setTab] = useState(String(value).startsWith('person-') || !value ? 'doko' : 'food');
 
   return (
     <div className="avatar-picker">
       <strong className="avatar-picker-title">Choose your avatar</strong>
 
       <div className="avatar-picker-tabs">
+        <button type="button" className={tab === 'doko' ? 'selected' : ''} onClick={() => setTab('doko')}>
+          Doko Mascot ({PEOPLE_AVATARS.length})
+        </button>
         <button type="button" className={tab === 'food' ? 'selected' : ''} onClick={() => setTab('food')}>
           Food
-        </button>
-        <button type="button" className={tab === 'people' ? 'selected' : ''} onClick={() => setTab('people')}>
-          People
         </button>
       </div>
 

@@ -5,6 +5,7 @@ import nutritionRoutes from './routes/nutritionRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import mealPlanRoutes from './routes/mealPlanRoutes.js';
+import sponsorRoutes from './routes/sponsorRoutes.js';
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { config } from './config/env.js';
 
@@ -19,6 +20,7 @@ app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/meal-plan', mealPlanRoutes);
+app.use('/api/sponsors', sponsorRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

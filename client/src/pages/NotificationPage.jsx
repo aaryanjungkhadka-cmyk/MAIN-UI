@@ -21,18 +21,19 @@ import {
   X,
 } from 'lucide-react';
 import khanaLensLogo from '../assets/images/KhanaLens.png';
+import dokoImage from '../assets/images/mascot-doko.png';
 import tacoAvatar from '../assets/images/avatar-taco.png';
 import sushiAvatar from '../assets/images/avatar-sushi.png';
 import { BottomNav } from '../components/BottomNav';
 
 // Visual mascot stickers inspired by Duolingo's mascot in the reference screenshot
 function MascotBadge({ type, size = 52 }) {
-  if (type === 'taco-wave') {
+  if (type === 'taco-wave' || type === 'doko') {
     return (
       <div className="kl-mascot-sticker" style={{ width: size, height: size }}>
         <img
-          src={tacoAvatar}
-          alt="Khana Mascot"
+          src={dokoImage}
+          alt="Doko Mascot"
           className="kl-mascot-img"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
         />
@@ -1015,12 +1016,14 @@ export default function NotificationPage() {
         {/* Notifications Stack (Duolingo iOS style) */}
         {filtered.length === 0 ? (
           <div className="kl-notif-empty">
-            <div className="kl-notif-empty-icon">
-              <Bell size={28} />
-            </div>
-            <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>All Caught Up!</h3>
+            <img
+              src={dokoImage}
+              alt="Doko Mascot"
+              style={{ width: 88, height: 88, objectFit: 'contain', filter: 'drop-shadow(0 6px 16px rgba(31,77,51,0.12))' }}
+            />
+            <h3 style={{ margin: '8px 0 0', fontSize: 17, fontWeight: 700 }}>All Caught Up!</h3>
             <p style={{ margin: 0, fontSize: 13, opacity: 0.7 }}>
-              No notifications in this category. You're doing amazing on your diet goals!
+              No notifications in this category. Doko says you're doing amazing! 🌾
             </p>
             <button
               type="button"

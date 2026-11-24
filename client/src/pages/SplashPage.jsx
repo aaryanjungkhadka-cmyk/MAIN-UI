@@ -4,7 +4,7 @@ import momoImage from "../assets/images/Momo.jpg";
 import healthyFoodOne from "../assets/images/HealthyFood-1.jpg";
 import healthyFoodTwo from "../assets/images/HealthyFood-2.jpg";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const foodImages = [
   { src: healthyFoodTwo, alt: "Colorful vegetable protein bowl" },
@@ -12,7 +12,7 @@ const foodImages = [
   { src: momoImage, alt: "Momo bowl" },
 ];
 
-/* Sample scan results, one per image above. Replace with real API results later. */
+/* Sample scan results, one per image above. */
 const scanResults = [
   {
     name: "Veggie protein bowl",
@@ -43,7 +43,7 @@ const scanResults = [
   },
 ];
 
-/* Finds any font file in src/assets/fonts. Does not break the page if the folder is empty. */
+/* Finds any font file in src/assets/fonts */
 const fontFiles = import.meta.glob("../assets/fonts/*.{ttf,otf,woff2}", {
   eager: true,
   query: "?url",
@@ -70,7 +70,6 @@ const fontFaceRule = fontUrl
 const grainUrl =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>\")";
 
-/* Logo palette: forest green #1F4D33, deep green #163D29, mint #8FD7B4, cream #FBF7EE */
 const splashCss = `
 ${fontFaceRule}
 
@@ -102,24 +101,24 @@ body,
   background: transparent !important;
 }
 
-/* Card fills the beige app frame */
+/* Card fills the beige app frame with responsive spacing */
 .splash-viewport .splash-card {
   position: relative;
   flex: 1;
   width: 100%;
   min-height: 100%;
   margin: 0;
-  padding: clamp(36px, 7dvh, 60px) 26px 26px;
+  padding: clamp(14px, 2.6dvh, 24px) 22px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   color: #1F4D33 !important;
-  overflow: hidden;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -159,13 +158,83 @@ body,
   opacity: 0.05;
 }
 
-.splash-viewport .splash-leaf::before,
-.splash-viewport .splash-leaf::after {
+.splash-viewport .splash-leaf {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.splash-viewport .splash-leaf-top {
+  width: 130px;
+  height: 130px;
+  right: -40px;
+  top: -30px;
+  border-radius: 0 100% 0 100%;
   background: rgba(31, 77, 51, 0.07) !important;
+  transform: rotate(25deg);
+}
+
+.splash-viewport .splash-leaf-side {
+  width: 90px;
+  height: 90px;
+  left: -40px;
+  bottom: 25%;
+  border-radius: 100% 0 100% 0;
+  background: rgba(31, 77, 51, 0.07) !important;
+  transform: rotate(-15deg);
 }
 
 .splash-viewport .splash-dot-grid {
-  background-image: radial-gradient(rgba(31, 77, 51, 0.2) 2.5px, transparent 2.5px) !important;
+  position: absolute;
+  width: 60px;
+  height: 90px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(31, 77, 51, 0.2) 2px, transparent 2px) !important;
+  background-size: 12px 12px;
+}
+
+.splash-viewport .splash-dot-grid-left {
+  left: 14px;
+  top: 40%;
+}
+
+.splash-viewport .splash-dot-grid-right {
+  right: 14px;
+  bottom: 12%;
+}
+
+/* Top Back Navigation */
+.splash-viewport .getstarted-top-nav {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 2px;
+}
+
+.splash-viewport .getstarted-back-btn {
+  background: rgba(31, 77, 51, 0.08);
+  border: none;
+  color: #1F4D33;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.splash-viewport .getstarted-back-btn:hover {
+  background: rgba(31, 77, 51, 0.16);
+  transform: translateX(-2px);
 }
 
 /* Header */
@@ -177,18 +246,18 @@ body,
   text-align: center;
 }
 
-/* Logo as a glass bubble - unclipped outer ring */
+/* Logo as a glass bubble */
 .splash-viewport .splash-logo {
-  width: 92px;
-  height: 92px;
-  margin: 0 auto 18px;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 8px;
   border-radius: 50% !important;
   background: linear-gradient(145deg, #FBF7EE, #E9DCC3) !important;
   box-shadow:
     inset 0 2px 2px rgba(255, 255, 255, 0.9),
     inset 0 -6px 12px rgba(31, 77, 51, 0.08),
     0 0 0 1px rgba(31, 77, 51, 0.15),
-    0 16px 30px rgba(31, 77, 51, 0.18) !important;
+    0 12px 24px rgba(31, 77, 51, 0.16) !important;
   padding: 0 !important;
   overflow: visible !important;
   display: flex;
@@ -208,11 +277,11 @@ body,
 /* Typography */
 .splash-viewport .app-title {
   color: #1F4D33 !important;
-  font-size: clamp(40px, 11vw, 50px);
+  font-size: clamp(30px, 8vw, 38px);
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -1.4px;
-  margin: 0 0 12px;
+  letter-spacing: -1.2px;
+  margin: 0 0 4px;
   text-align: center;
 }
 
@@ -222,24 +291,24 @@ body,
 
 .splash-viewport .tagline {
   color: #1F4D33 !important;
-  font-size: clamp(20px, 5.6vw, 24px);
+  font-size: clamp(16px, 4.6vw, 19px);
   font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.5px;
-  margin: 0 0 10px;
+  letter-spacing: -0.4px;
+  margin: 0 0 4px;
   text-align: center;
 }
 
 .splash-viewport .description {
   color: rgba(31, 77, 51, 0.72) !important;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.4;
   margin: 0;
   text-align: center;
 }
 
-/* Food image frame, styled as a camera viewfinder */
+/* Food Scanner Viewfinder (NO VIDEO HERE) */
 .splash-viewport .splash-media {
   position: relative;
   z-index: 1;
@@ -248,255 +317,222 @@ body,
   align-items: center;
   width: 100%;
   transform: none !important;
-  margin: 28px 0 0 !important;
+  margin: 8px 0 0 !important;
 }
 
 .splash-viewport .splash-food-image {
   position: relative;
   overflow: hidden;
-  width: min(56vw, 220px) !important;
-  height: min(56vw, 220px) !important;
-  margin: 0 auto 12px !important;
-  border: 9px solid rgba(251, 247, 238, 0.95) !important;
-  background: #123524 !important;
+  width: min(52vw, 205px) !important;
+  height: min(52vw, 205px) !important;
+  margin: 0 auto 8px !important;
+  border: 8px solid rgba(251, 247, 238, 0.95) !important;
+  border-radius: 50% !important;
   box-shadow:
-    inset 0 2px 3px rgba(255, 255, 255, 0.6),
-    0 18px 40px rgba(31, 77, 51, 0.18),
-    0 0 0 20px rgba(31, 77, 51, 0.06),
-    0 0 0 21px rgba(31, 77, 51, 0.12) !important;
+    0 18px 36px rgba(31, 77, 51, 0.22),
+    0 4px 10px rgba(31, 77, 51, 0.1) !important;
 }
 
-.splash-viewport .food-slide {
+.splash-viewport .splash-food-image img.food-slide {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.8s ease;
-  z-index: 0;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transform: scale(1.04);
 }
 
-.splash-viewport .food-slide.active {
+.splash-viewport .splash-food-image img.food-slide.active {
   opacity: 1;
-  z-index: 1;
+  transform: scale(1);
 }
 
-/* Dim overlay so the scan reads clearly */
 .splash-viewport .scan-dim {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  background: radial-gradient(circle at center, transparent 45%, rgba(6, 42, 23, 0.35) 100%);
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(18, 53, 36, 0.25), rgba(18, 53, 36, 0.05) 50%, rgba(18, 53, 36, 0.3));
 }
 
-/* Corner brackets, always visible */
+.splash-viewport .scan-corners {
+  position: absolute;
+  inset: 18px;
+  pointer-events: none;
+}
+
 .splash-viewport .scan-corners span {
   position: absolute;
-  z-index: 4;
-  width: 26px;
-  height: 26px;
+  width: 18px;
+  height: 18px;
   border-color: #8FD7B4;
   border-style: solid;
   border-width: 0;
-  filter: drop-shadow(0 0 4px rgba(143, 215, 180, 0.8));
+  filter: drop-shadow(0 0 3px rgba(143, 215, 180, 0.6));
 }
 
-.splash-viewport .scan-corners span:nth-child(1) { top: 14px; left: 14px; border-top-width: 2px; border-left-width: 2px; border-top-left-radius: 8px; }
-.splash-viewport .scan-corners span:nth-child(2) { top: 14px; right: 14px; border-top-width: 2px; border-right-width: 2px; border-top-right-radius: 8px; }
-.splash-viewport .scan-corners span:nth-child(3) { bottom: 14px; left: 14px; border-bottom-width: 2px; border-left-width: 2px; border-bottom-left-radius: 8px; }
-.splash-viewport .scan-corners span:nth-child(4) { bottom: 14px; right: 14px; border-bottom-width: 2px; border-right-width: 2px; border-bottom-right-radius: 8px; }
+.splash-viewport .scan-corners span:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-top-width: 2.5px;
+  border-left-width: 2.5px;
+  border-top-left-radius: 6px;
+}
 
-/* Laser scan line sweeping top to bottom */
+.splash-viewport .scan-corners span:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-top-width: 2.5px;
+  border-right-width: 2.5px;
+  border-top-right-radius: 6px;
+}
+
+.splash-viewport .scan-corners span:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 2.5px;
+  border-left-width: 2.5px;
+  border-bottom-left-radius: 6px;
+}
+
+.splash-viewport .scan-corners span:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 2.5px;
+  border-right-width: 2.5px;
+  border-bottom-right-radius: 6px;
+}
+
 .splash-viewport .scan-line {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 3px;
-  z-index: 3;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #8FD7B4, #FFFFFF, #8FD7B4, transparent);
+  box-shadow: 0 0 10px #8FD7B4, 0 0 4px #FFFFFF;
+  animation: splash-sweep 2.4s ease-in-out infinite;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, #8FD7B4 20%, #ffffff 50%, #8FD7B4 80%, transparent);
-  box-shadow: 0 0 12px rgba(143, 215, 180, 0.95), 0 0 30px rgba(63, 164, 122, 0.6);
-  animation: scan-sweep 2.4s ease-in-out infinite;
 }
 
-.splash-viewport .scan-line::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -46px;
-  height: 46px;
-  background: linear-gradient(180deg, rgba(143, 215, 180, 0), rgba(143, 215, 180, 0.22));
+@keyframes splash-sweep {
+  0%   { top: 18%; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { top: 82%; opacity: 0; }
 }
 
-@keyframes scan-sweep {
-  0% { top: 14px; opacity: 0; }
-  8% { opacity: 1; }
-  92% { opacity: 1; }
-  100% { top: calc(100% - 14px); opacity: 0; }
-}
-
-/* Small bubbles popping out from all sides of the scanning image */
+/* Floating nutrition tags around the circular food image */
 .splash-viewport .scan-bubbles {
   position: absolute;
-  inset: 0;
-  z-index: 5;
+  inset: -12px -20px;
   pointer-events: none;
 }
 
 .splash-viewport .scan-bubble {
   position: absolute;
-  animation: bubble-pop 0.6s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  animation: splash-bubble-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* Each bubble comes from its own side: --fx / --fy set the starting offset */
-.splash-viewport .scan-bubble-1 { left: -4px; top: 34px; --fx: -36px; --fy: 0px; }
-.splash-viewport .scan-bubble-2 { right: -4px; top: 66px; --fx: 36px; --fy: 0px; }
-.splash-viewport .scan-bubble-3 { left: 44px; top: -8px; --fx: 0px; --fy: -28px; }
-.splash-viewport .scan-bubble-4 { right: 16px; top: 180px; --fx: 0px; --fy: 28px; }
+@keyframes splash-bubble-in {
+  0%   { opacity: 0; transform: scale(0.6) translateY(6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.splash-viewport .scan-bubble-1 { top: 4%;  left: 0%; }
+.splash-viewport .scan-bubble-2 { top: 12%; right: -4%; }
+.splash-viewport .scan-bubble-3 { bottom: 22%; left: -6%; }
+.splash-viewport .scan-bubble-4 { bottom: 14%; right: -2%; }
 
 .splash-viewport .scan-bubble-inner {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  align-items: center;
-  padding: 6px 11px;
-  border-radius: 999px;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.98) 0%, rgba(232, 247, 240, 0.92) 100%);
-  border: 1px solid rgba(63, 164, 122, 0.4);
-  box-shadow:
-    inset 0 1px 0 #FFFFFF,
-    0 8px 16px rgba(31, 77, 51, 0.16);
-  white-space: nowrap;
-  animation: bubble-float 3.2s ease-in-out infinite;
+  padding: 4px 9px;
+  border-radius: 12px;
+  background: rgba(251, 247, 238, 0.92);
+  border: 1px solid rgba(31, 77, 51, 0.16);
+  box-shadow: 0 6px 14px rgba(31, 77, 51, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  line-height: 1.15;
 }
 
 .splash-viewport .scan-bubble-label {
-  color: #3FA47A;
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
+  font-size: 9.5px;
+  font-weight: 600;
   text-transform: uppercase;
-  line-height: 1.2;
+  letter-spacing: 0.4px;
+  color: rgba(31, 77, 51, 0.65);
 }
 
 .splash-viewport .scan-bubble-value {
-  color: #1E9E6A;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #1F4D33;
 }
 
-@keyframes bubble-pop {
-  from { opacity: 0; transform: translate(var(--fx, 0px), var(--fy, 0px)) scale(0.4); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes bubble-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .splash-viewport .scan-line {
-    animation: none !important;
-    display: none !important;
-  }
-  .splash-viewport .scan-bubble,
-  .splash-viewport .scan-bubble-inner {
-    animation: none !important;
-  }
-}
-
-@media (max-height: 760px) {
-  .splash-viewport .splash-food-image {
-    width: 180px !important;
-    height: 180px !important;
-    margin-bottom: 8px !important;
-  }
-  .splash-viewport .scan-bubble-3 { top: -8px; }
-  .splash-viewport .scan-bubble-4 { top: 150px; }
-}
-
-@media (max-width: 380px) {
-  .splash-viewport .scan-bubble-inner {
-    padding: 5px 9px;
-  }
-  .splash-viewport .scan-bubble-value {
-    font-size: 11px;
-  }
+/* Pagination dots */
+.splash-viewport .splash-pagination {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
 }
 
 .splash-viewport .splash-pagination .dot {
-  background-color: rgba(31, 77, 51, 0.25) !important;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(31, 77, 51, 0.22) !important;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .splash-viewport .splash-pagination .dot.active {
-  background-color: #1F4D33 !important;
-  box-shadow: 0 0 10px rgba(31, 77, 51, 0.35);
+  width: 22px;
+  background: #1F4D33 !important;
 }
 
-/* Buttons: full card width, aligned to each other */
+/* Action Buttons */
 .splash-viewport .splash-actions {
-  position: relative !important;
-  left: auto !important;
-  right: auto !important;
-  bottom: auto !important;
+  position: relative;
   z-index: 1;
-  width: 100% !important;
-  margin: auto 0 0 !important;
-  padding: 0 !important;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 6px;
 }
 
-.splash-viewport .splash-card .btn {
-  width: 100%;
-  min-height: 58px;
-  border-radius: 18px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.2px;
-  text-decoration: none;
-  display: flex;
+.splash-viewport .btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
+  padding: 13.5px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
   box-sizing: border-box;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
-/* Primary: logo green liquid glass */
 .splash-viewport .splash-primary {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(62, 116, 88, 0.96) 0%, rgba(31, 77, 51, 0.96) 100%) !important;
-  color: #FBF7EE !important;
-  border: 1px solid rgba(31, 77, 51, 0.6) !important;
+  background: linear-gradient(135deg, #1F4D33 0%, #163D29 100%) !important;
+  color: #FFFFFF !important;
   box-shadow:
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.2),
-    0 14px 28px rgba(31, 77, 51, 0.28) !important;
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
+    0 10px 24px rgba(31, 77, 51, 0.24),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.35) !important;
 }
 
-.splash-viewport .splash-primary::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-/* Secondary: translucent glass with logo green text */
 .splash-viewport .splash-secondary {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(251, 247, 238, 0.5) 100%) !important;
   color: #1F4D33 !important;
@@ -504,20 +540,19 @@ body,
   box-shadow:
     inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
     0 10px 22px rgba(31, 77, 51, 0.12) !important;
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.splash-viewport .splash-primary:hover,
-.splash-viewport .splash-secondary:hover {
+.splash-viewport .btn:hover {
   transform: translateY(-2px);
 }
 
 .splash-viewport .splash-register-prompt {
   width: 100%;
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: rgba(31, 77, 51, 0.75) !important;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
   text-align: center;
 }
@@ -534,7 +569,7 @@ body,
 }
 `;
 
-function SplashPage() {
+export default function SplashPage() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -550,6 +585,7 @@ function SplashPage() {
   return (
     <div className="kl-page splash-viewport">
       <style>{splashCss}</style>
+
       <main className="mobile-card splash-card">
         <div className="splash-weave" aria-hidden="true" />
         <div className="splash-grain" aria-hidden="true" />
@@ -572,6 +608,15 @@ function SplashPage() {
         <div className="splash-dot-grid splash-dot-grid-left" aria-hidden="true" />
         <div className="splash-dot-grid splash-dot-grid-right" aria-hidden="true" />
 
+        {/* Back Link to Landing Page */}
+        <div className="getstarted-top-nav">
+          <Link to="/" className="getstarted-back-btn" aria-label="Back to Landing Page">
+            <ArrowLeft size={15} />
+            <span>Back</span>
+          </Link>
+        </div>
+
+        {/* Header */}
         <section className="content-header splash-header">
           <div className="logo-badge splash-logo">
             <img src={khanaLensLogo} alt="KhanaLens logo" />
@@ -581,6 +626,7 @@ function SplashPage() {
           <p className="description">AI-powered nutrition analysis<br />for your everyday meals.</p>
         </section>
 
+        {/* Food Scanner Viewfinder (NO VIDEO ON THIS PAGE) */}
         <section className="media-section splash-media">
           <div className="food-image-wrapper splash-food-image">
             {foodImages.map((image, index) => (
@@ -628,14 +674,19 @@ function SplashPage() {
           </div>
         </section>
 
+        {/* CTA Actions */}
         <div className="button-group splash-actions">
-          <Link to="/login" className="btn btn-primary splash-primary">Get Started <ArrowRight size={22} /></Link>
-          <Link to="/login" className="btn btn-secondary splash-secondary">Log In</Link>
-          <p className="splash-register-prompt">Don’t have an account? <Link to="/register">Sign Up</Link></p>
+          <Link to="/register" className="btn btn-primary splash-primary">
+            Get Started <ArrowRight size={20} />
+          </Link>
+          <Link to="/login" className="btn btn-secondary splash-secondary">
+            Log In
+          </Link>
+          <p className="splash-register-prompt">
+            Don’t have an account? <Link to="/register">Sign Up</Link>
+          </p>
         </div>
       </main>
     </div>
   );
 }
-
-export default SplashPage;

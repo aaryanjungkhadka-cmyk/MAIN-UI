@@ -36,5 +36,7 @@ export const getProfileApi = () => API.get('/profile');
 export const saveProfileApi = (profile) => API.put('/profile', profile);
 export const getMealPlanApi = () => API.get('/meal-plan');
 export const generateMealPlanApi = () => API.post('/meal-plan');
+export const getSponsorsApi = (params) => API.get('/sponsors', { params });
+export const trackSponsorClickApi = (id) => API.post(`/sponsors/${id}/click`);
 
 export default API;

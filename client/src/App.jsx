@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Scan } from './pages/Scan';
 import { Dashboard } from './pages/Dashboard';
 import { Goals } from './pages/Goals';
+import LandingPage from './pages/LandingPage';
 import SplashPage from './pages/SplashPage';
 import FoodAnalysisResult from './pages/FoodAnalysisResult';
 import ItemDetails from './pages/ItemDetails';
@@ -59,8 +60,10 @@ function AppRoutes() {
     <div className="kl-app-frame">
       <div className="route-transition kl-page-route" key={location.pathname}>
         <Routes>
-          <Route path="/" element={<SplashPage />} />
-          <Route path="/onboarding" element={<SplashPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/get-started" element={<Navigate to="/" replace />} />
+          <Route path="/onboarding" element={<Navigate to="/" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Login initialSignup />} />
           <Route element={<ProtectedRoute />}>

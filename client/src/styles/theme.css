@@ -46,20 +46,19 @@ html, body, #root {
   width: 100%;
   max-width: 420px;
   min-height: 100dvh;
-  height: 100dvh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: linear-gradient(170deg, #FBF8F0 0%, #F7F1E4 60%, #F2EADA 100%);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   box-sizing: border-box;
 }
 
 @media (min-width: 481px) {
   .kl-app-frame {
-    height: min(880px, calc(100dvh - 32px));
-    min-height: min(880px, calc(100dvh - 32px));
-    margin: 16px auto;
+    min-height: calc(100dvh - 32px);
+    margin: 0 auto 16px;
     border-radius: 36px;
     border: 1px solid rgba(31, 77, 51, 0.1);
     box-shadow: 0 30px 60px rgba(31, 77, 51, 0.12);
@@ -72,11 +71,11 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   background: transparent;
-  min-height: 0;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -84,10 +83,10 @@ html, body, #root {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 /* Hide desktop browser scrollbar across mobile mockup frame */
@@ -192,7 +191,7 @@ html, body, #root {
 /* Animations */
 @keyframes kl-fade-up {
   from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 
 .kl-fade-up {
@@ -210,7 +209,13 @@ html, body, #root {
 }
 
 /* STEP 2: Brand Logo styles */
-.kl-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.kl-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
 .kl-brand-badge {
   display: inline-flex;
   align-items: center;
@@ -232,37 +237,128 @@ html, body, #root {
   outline: none;
   background: transparent;
 }
+.kl-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
 .kl-brand-text strong {
   display: block;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
+  font-size: 15.5px;
+  font-weight: 750;
+  line-height: 1.15;
   letter-spacing: -0.3px;
   color: var(--kl-green);
+  white-space: nowrap;
 }
 .kl-brand-text strong span { color: var(--kl-mint); }
 .kl-brand-text small {
   display: block;
-  margin-top: 2px;
-  font-size: 9px;
+  margin-top: 1.5px;
+  font-size: 8.5px;
   font-weight: 600;
   color: var(--kl-muted);
+  white-space: nowrap;
+  letter-spacing: -0.1px;
 }
 
-/* STEP 3: Header styles */
-.kl-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px 6px; }
-.kl-header-actions { display: flex; align-items: center; gap: 7px; }
-.kl-header-btn {
-  width: 42px; height: 42px; display: grid; place-items: center; flex-shrink: 0; padding: 0;
-  border-radius: 14px; border: 1px solid rgba(31, 77, 51, 0.12);
-  background: rgba(255, 255, 255, 0.85); color: var(--kl-green);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 12px rgba(31, 77, 51, 0.08);
-  text-decoration: none; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* STEP 3: Persistent Navigation Header */
+:root {
+  --kl-header-h: 64px;
+  --kl-header-total-h: calc(var(--kl-header-h) + env(safe-area-inset-top, 0px));
 }
-.kl-header-btn:hover { transform: translateY(-2px); }
+
+.kl-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+  -webkit-transform: translate3d(-50%, 0, 0);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: max(12px, env(safe-area-inset-top, 12px)) 16px 10px;
+  background: rgba(251, 248, 240, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(31, 77, 51, 0.08);
+  box-shadow: 0 4px 20px rgba(31, 77, 51, 0.05);
+  z-index: 1000;
+  pointer-events: auto;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 481px) {
+  .kl-header {
+    max-width: 420px;
+    border-top-left-radius: 36px;
+    border-top-right-radius: 36px;
+  }
+}
+
+@media (max-width: 365px) {
+  .kl-header {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 6px;
+  }
+  .kl-header-actions {
+    gap: 5px;
+  }
+  .kl-header-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+  .kl-header-btn svg {
+    width: 17px;
+    height: 17px;
+  }
+  .kl-header-btn-avatar .people-avatar,
+  .kl-header-btn-avatar .food-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+  .kl-brand {
+    gap: 6px;
+  }
+  .kl-brand-text strong {
+    font-size: 14px;
+  }
+  .kl-brand-text small {
+    font-size: 8px;
+  }
+}
+
+.kl-header-spacer {
+  display: block;
+  width: 100%;
+  height: var(--kl-header-real-h, var(--kl-header-total-h, calc(64px + env(safe-area-inset-top, 0px))));
+  min-height: var(--kl-header-real-h, var(--kl-header-total-h, calc(64px + env(safe-area-inset-top, 0px))));
+  flex-shrink: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.kl-header-actions { display: flex; align-items: center; gap: 6px; }
+.kl-header-btn {
+  width: 39px; height: 39px; display: grid; place-items: center; flex-shrink: 0; padding: 0;
+  border-radius: 13px; border: 1px solid rgba(31, 77, 51, 0.12);
+  background: rgba(255, 255, 255, 0.9); color: var(--kl-green);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 3px 10px rgba(31, 77, 51, 0.06);
+  text-decoration: none; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.kl-header-btn:hover { transform: translateY(-1.5px); }
+.kl-header-btn:active { transform: scale(0.96); }
 .kl-header-btn-avatar { background: linear-gradient(180deg, #E6F5EE 0%, #CFEBDD 100%); overflow: hidden; }
 .kl-header-btn-avatar .people-avatar,
-.kl-header-btn-avatar .food-avatar { width: 36px; height: 36px; border-radius: 11px; object-fit: cover; display: block; }
+.kl-header-btn-avatar .food-avatar { width: 33px; height: 33px; border-radius: 10px; object-fit: cover; display: block; }
 
 /* Normal Fire Streak Button */
 .kl-header-btn-fire {
@@ -363,16 +459,48 @@ html, body, #root {
 
 /* STEP 4: Floating Figma-style Navigation Bar with expanding active pill */
 .kl-bottom-nav-wrap {
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+  -webkit-transform: translate3d(-50%, 0, 0);
   width: 100%;
+  max-width: 420px;
   box-sizing: border-box;
   padding: 6px 14px calc(14px + env(safe-area-inset-bottom, 0px));
   background: transparent;
-  z-index: 100;
-  pointer-events: auto;
+  z-index: 99999;
+  pointer-events: none; /* Let taps pass through padding gaps on mobile */
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.kl-bottom-nav-wrap.nav-hidden {
+  transform: translate3d(-50%, calc(100% + 32px), 0);
+  -webkit-transform: translate3d(-50%, calc(100% + 32px), 0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kl-bottom-nav-wrap.nav-visible {
+  transform: translate3d(-50%, 0, 0);
+  -webkit-transform: translate3d(-50%, 0, 0);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kl-bottom-nav-wrap {
+    transition: opacity 0.2s ease !important;
+    transform: translate3d(-50%, 0, 0) !important;
+    -webkit-transform: translate3d(-50%, 0, 0) !important;
+  }
+  .kl-bottom-nav-wrap.nav-hidden {
+    opacity: 0 !important;
+    transform: translate3d(-50%, 0, 0) !important;
+    -webkit-transform: translate3d(-50%, 0, 0) !important;
+  }
 }
 
 .kl-bottom-nav {
@@ -384,15 +512,20 @@ html, body, #root {
   align-items: center;
   justify-content: space-between;
   padding: 5px 6px;
-  /* Translucent liquid beige glass gradient */
+  pointer-events: auto; /* Active hit area */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  /* High-opacity liquid beige glass gradient with solid fallback for Android GPUs */
   background: linear-gradient(
     135deg,
-    rgba(255, 253, 248, 0.82) 0%,
-    rgba(247, 240, 227, 0.72) 48%,
-    rgba(241, 232, 216, 0.76) 100%
+    rgba(255, 253, 248, 0.94) 0%,
+    rgba(247, 240, 227, 0.90) 48%,
+    rgba(241, 232, 216, 0.92) 100%
   );
-  backdrop-filter: blur(26px) saturate(190%) contrast(102%);
-  -webkit-backdrop-filter: blur(26px) saturate(190%) contrast(102%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 999px;
   /* Liquid glass specular highlights & realistic soft drop shadow */
   box-shadow:
@@ -434,6 +567,8 @@ html, body, #root {
   color: rgba(31, 77, 51, 0.65);
   transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   z-index: 1;
 }
